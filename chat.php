@@ -8,10 +8,26 @@
 		"Izadora Santana",
 		"Ivalber Miguel",
 		"Dayvisson Spacca",
-		"Diego Filipe"
+		"Diego Filipe",
+		"João Brito"
 	];
+	
+	$pattern = '~^[[:alnum:]-]+$~u';
+	
+	if(!isset($_POST['userID']) || empty(trim(clean($_POST['userID']))) || ((boolean) preg_match($pattern, trim(clean($_POST['userID'])))) == false)
+	{
+		header('Location: ./index.php');
+	}
 
-	$_SESSION['username'] = $users[random_int(0,5)];
+	$_SESSION['username'] = clean($_POST['userID']); //$users[random_int(0,5)];
+	
+	function clean($string){
+    
+    	$text   = strip_tags($string);
+    	$result = stripslashes($text);
+    	
+	  	return $result;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +44,7 @@
         <div class="chat-window" id="chat-window">
         </div>
 		<form id="chat-form">
-			<input class='text-bar form-control' type="text" id="message" placeholder="Digite sua mensagem">
+			<input class='text-bar form-control' maxlength="500" type="text" id="message" placeholder="Digite sua mensagem">
 			<button class='btn btn-primary' type="submit" onclick="sendMessage()">Send</button>
 		</form>
     </div>
@@ -51,7 +67,7 @@
 			xhr.send();
 		}
 
-		function sendMessage() {
+		function sendMessage(event) {
 			const messageInput = document.getElementById('message');
 			const message = messageInput.value.trim();
 			if (message !== '') {
@@ -74,4 +90,3 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>
-
