@@ -1,57 +1,54 @@
+<?php
+
+	session_start();
+
+	$users = [
+		"<span class='badge bg-info text-dark'> 👑 Admin </span> Wagner Cunha",
+		"Iago Rivelo",
+		"Izadora Santana",
+		"Ivalber Miguel",
+		"Dayvisson Spacca",
+		"Diego Filipe"
+	];
+
+	$_SESSION['username'] = $users[random_int(0,5)];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat em Tempo Real</title>
-    <style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			min-height: 100vh;
-			background-color: #f4f4f4;
-		}
-
-		.chat {
-			width: 80%;
-			max-width: 400px;
-			background-color: #fff;
-			border-radius: 10px;
-			padding: 20px;
-			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		}
-
-		.chat-window {
-			height: 300px;
-			overflow-y: scroll;
-			border: 1px solid #ccc;
-			padding: 10px;
-		}
-    </style>
+    <title>💬 Real time chat</title>
+	<link rel="stylesheet" href="styles/chat.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
 <body>
     <div class="chat">
         <div class="chat-window" id="chat-window">
         </div>
-        <input type="text" id="message" placeholder="Digite sua mensagem">
-        <button onclick="sendMessage()">Enviar</button>
+		<form id="chat-form">
+			<input class='text-bar form-control' type="text" id="message" placeholder="Digite sua mensagem">
+			<button class='btn btn-primary' type="submit" onclick="sendMessage()">Send</button>
+		</form>
     </div>
     <script>
+
+		document.getElementById("chat-form").addEventListener("submit",function(e){
+			e.preventDefault();
+		},true)
+
     	function getMessages() {
 			const chatWindow = document.getElementById('chat-window');
 			const xhr = new XMLHttpRequest();
-			xhr.open('GET', 'get_messages.php', true);
+			xhr.open('GET', 'logic/get_messages.php', true);
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState === 4 && xhr.status === 200) {
 				    chatWindow.innerHTML = xhr.responseText;
 				    chatWindow.scrollTop = chatWindow.scrollHeight;
 				}
 			};
-//			xhr.send();
+			xhr.send();
 		}
 
 		function sendMessage() {
@@ -59,7 +56,7 @@
 			const message = messageInput.value.trim();
 			if (message !== '') {
 				const xhr = new XMLHttpRequest();
-				xhr.open('POST', 'send_message.php', true);
+				xhr.open('POST', 'logic/send_message.php', true);
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				xhr.onreadystatechange = function () {
 				    if (xhr.readyState === 4 && xhr.status === 200) {
@@ -74,6 +71,7 @@
 		setInterval(getMessages, 2000);
 		getMessages(); // Carregar as mensagens iniciais
     </script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 </html>
 

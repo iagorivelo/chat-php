@@ -1,0 +1,14 @@
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:26:57'>Carla Chocolate</b>: Olá</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:00'>Izadora Santana</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:03'>Dayvisson Spacca</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:06'>Iago Rivelo</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:12'>Carla Chocolate</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:14'>Hugo Hilário</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:16'>Dayvisson Spacca</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:50'>Dayvisson Spacca</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:52'>Dayvisson Spacca</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:53'><span class='badge bg-info text-dark'> 👑 Admin </span> Wagner Cunha</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123]</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123</span><br>
+<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:45'>Ivalber Miguel</b>: 123</span><br>
