@@ -12,7 +12,10 @@
     <h1>Wellcome to the best chat of the world :)</h1>
 
     <section>
-        <a class="btn btn-success" href="/chat.php">Go to chat</a>
+	    <form method="POST" action="./chat.php">
+	    	<input name="userID" required id="user-id" style="margin-bottom: 10px;" type='text' placeholder='Username' class='form-control' />
+	        <input class="btn btn-success" type="submit" value="Go to chat" />
+        </form>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
