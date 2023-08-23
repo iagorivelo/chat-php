@@ -18,3 +18,9 @@ section a { /* Go to chat button */
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.341);
 }
+
+form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
