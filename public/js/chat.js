@@ -7,12 +7,10 @@ getMessages();
 
 setInterval(clearMessages, (1000 * 60) * 30); // 30 Min
 
-
 function updateChat() {
     getMessages();
     getUsers();
 }
-
 
 function clearMessages() {
 
@@ -30,7 +28,7 @@ function getMessages() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             chatWindow.innerHTML = xhr.responseText;
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            // chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     };
     xhr.send();
@@ -65,4 +63,10 @@ function sendMessage(event) {
         };
         xhr.send('message=' + encodeURIComponent(message) + '&action=send-text');
     }
+}
+
+function scrollChat() {
+    const chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
 }

@@ -51,8 +51,12 @@ if (isset($_POST['user']) && !empty($_POST['user'])) {
 		<form id="chat-form">
 			<input class='text-bar form-control' maxlength="500" type="text" id="message" placeholder="Digite sua mensagem">
 			<button class='btn btn-primary' type="submit" onclick="sendMessage()">Enviar</button>
+			<div class="position-relative">
+				<div  style="left: 35px;" class="position-absolute">
+					<button class="btn btn-sm btn-success rounded-circle" onclick="scrollChat()"><i class="fa fa-chevron-down"></i></button>
+				</div>
+			</div>
 		</form>
-
 	</main>
 </body>
 <script src="./public/js/chat.js"></script>
