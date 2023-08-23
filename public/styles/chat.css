@@ -13,26 +13,38 @@ body {
 }
 
 .chat {
-
-    width: 80%;
-    max-width: 400px;
+    width: 60%;
+    /* max-width: 400px; */
     background-color: #fff;
     border-radius: 10px;
-    padding: 20px;
+    padding: 0px 20px 20px 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .chat-window {
 
-    height: 300px;
+    height: 500px;
     overflow-y: scroll;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
 }
 
-form {
+.own-message {
+    display: flex;
+    justify-content: flex-end;
+    margin: 2px;
+    border-radius: 10px 10px 0px 10px;
+}
 
+.other-message {
+    display: flex;
+    justify-content: flex-start;
+    margin: 2px;
+    border-radius: 0px 10px 10px 10px;
+}
+
+form {
     display: flex;
     width: 100%;
     margin-top: 5px;
@@ -68,4 +80,21 @@ form {
 .disconnect-message b {
 
     background-color: rgba(193, 23, 23, 0.341);
+}
+
+.online-circle {
+    width: 8px;
+    height: 8px;
+    background-color: green;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
 }
