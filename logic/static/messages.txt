@@ -1,14 +1,80 @@
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:26:57'>Carla Chocolate</b>: Olá</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:00'>Izadora Santana</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:03'>Dayvisson Spacca</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:06'>Iago Rivelo</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:12'>Carla Chocolate</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:14'>Hugo Hilário</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:16'>Dayvisson Spacca</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:50'>Dayvisson Spacca</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:52'>Dayvisson Spacca</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:27:53'><span class='badge bg-info text-dark'> 👑 Admin </span> Wagner Cunha</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123]</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:44'>Ivalber Miguel</b>: 123</span><br>
-<span class='own-message'><b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 22/08/2023 12:28:45'>Ivalber Miguel</b>: 123</span><br>
+
+        <span class='connect-message'>
+            <b>IVALBER Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>IVALBER Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>Ivalber Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>Ivalber Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>Ivalber Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>Ivalber Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>123 Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>123 Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>123 Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>123 Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>123] Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>123] Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>12312 Conectou-se</b>
+        </span><br>
+
+        <span class='own-message'>
+            <b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: 23/08/2023 13:38:53'>12312</b>: Olá
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>12312 Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>000 Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>000 Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>OLÁ GALERINHA Conectou-se</b>
+        </span><br>
+
+        <span class='disconnect-message'>
+            <b>OLÁ GALERINHA Desconectou-se</b>
+        </span><br>
+
+        <span class='connect-message'>
+            <b>Olá Conectou-se</b>
+        </span><br>

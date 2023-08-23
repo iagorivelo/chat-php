@@ -1,4 +1,5 @@
 body {
+
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -12,6 +13,7 @@ body {
 }
 
 .chat {
+
     width: 80%;
     max-width: 400px;
     background-color: #fff;
@@ -21,6 +23,7 @@ body {
 }
 
 .chat-window {
+
     height: 300px;
     overflow-y: scroll;
     border: 1px solid #ccc;
@@ -29,6 +32,7 @@ body {
 }
 
 form {
+
     display: flex;
     width: 100%;
     margin-top: 5px;
@@ -36,6 +40,32 @@ form {
 }
 
 .text-bar {
+
     width: 100%;
     border-radius: 5px;
+}
+
+.connect-message, .disconnect-message {
+
+    display: flex;
+    justify-content: center;
+    margin: 2px;
+}
+
+.connect-message b, .disconnect-message b {
+
+    border-radius: 5px;
+    padding: 2px;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.connect-message b {
+
+    background-color: rgba(0, 0, 0, 0.127);
+}
+
+.disconnect-message b {
+
+    background-color: rgba(193, 23, 23, 0.341);
 }
