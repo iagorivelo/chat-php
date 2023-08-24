@@ -2,26 +2,10 @@
 
 session_start();
 
-include './logic/chatControl.php';
-
-if (isset($_POST['user']) && !empty($_POST['user'])) {
-	$chatControl = new ChatControl($_POST['user']);
-	$chatControl->connectChat();
-
-	$_SESSION['numberOfUsers'] += 1;
-
-	$message = "
-        <span id='04b6e1a104ba0ed5e7985abde3e13140' class='connect-message'>
-            <b>" . $_POST['user'] . " Conectou-se</b>
-        </span><br>";
-
-	file_put_contents('./logic/static/messages.txt', $message . PHP_EOL, FILE_APPEND);
-} else {
+if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
 	header('Location: ./index.php');
-	$_SESSION['numberOfUsers'] -= 1;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
