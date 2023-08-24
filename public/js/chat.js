@@ -50,6 +50,7 @@ function getUsers() {
 function sendMessage(event) {
 
     const messageInput = document.getElementById('message');
+    const chatWindow = document.getElementById('chat-window');
     const message = messageInput.value.trim();
     if (message !== '') {
         const xhr = new XMLHttpRequest();
@@ -63,10 +64,10 @@ function sendMessage(event) {
         };
         xhr.send('message=' + encodeURIComponent(message) + '&action=send-text');
     }
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 function scrollChat() {
     const chatWindow = document.getElementById('chat-window');
     chatWindow.scrollTop = chatWindow.scrollHeight;
-
 }
