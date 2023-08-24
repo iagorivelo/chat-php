@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 include './logic/chatControl.php';
 
 if (isset($_POST['user']) && !empty($_POST['user'])) {
