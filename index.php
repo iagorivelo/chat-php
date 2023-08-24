@@ -10,12 +10,15 @@
         </span><br>";
     
         file_put_contents('./logic/static/messages.txt', $message . PHP_EOL, FILE_APPEND);
+        
+        unset($_SESSION);
+        session_destroy();
     }
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +32,7 @@
     <h1>💬 Bate papo</h1>
 
     <section>
-	    <form method="POST" action="./chat.php">
+	    <form method="POST" action="./connect.php">
 	    	<input name="user" required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu belo nome' class='form-control' />
 	        <input class="btn btn-success" type="submit" value="Bater um papo" />
         </form>
