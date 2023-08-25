@@ -2,14 +2,15 @@ document.getElementById("chat-form").addEventListener("submit", function (event)
     event.preventDefault();
 }, true)
 
-setInterval(updateChat, 2000);
-getMessages();
+window.onload = (() => {
+    setInterval(updateChat, 2000);
+    getMessages();
+})();
 
 setInterval(clearMessages, (1000 * 60) * 30); // 30 Min
 
 function updateChat() {
     getMessages();
-    getUsers();
 }
 
 function clearMessages() {
@@ -28,7 +29,6 @@ function getMessages() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             chatWindow.innerHTML = xhr.responseText;
-            // chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     };
     xhr.send();
@@ -36,15 +36,6 @@ function getMessages() {
 
 function getUsers() {
 
-    const usersCount = document.getElementById('numberOfUsers');
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'logic/chatControl.php?getUsers=true', true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            usersCount.innerHTML = xhr.responseText;
-        }
-    };
-    xhr.send();
 }
 
 function sendMessage(event) {
@@ -64,7 +55,6 @@ function sendMessage(event) {
         };
         xhr.send('message=' + encodeURIComponent(message) + '&action=send-text');
     }
-    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 function scrollChat() {

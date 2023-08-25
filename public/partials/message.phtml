@@ -1,0 +1,33 @@
+<?php
+if (isset($data) && !empty($data))
+{
+    if (isset($data['own']) && $data['own'])
+    {
+    ?>
+        <div class="message">
+            <div class="own-message">
+                <div class=" content">
+                    <p><?= $data['message']?></p>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+    else 
+    {
+    ?>
+        <div class="message">
+            <div class="other-message">
+                <div class=" content">
+                    <div class="header-message">
+                        <span><?= $data['user']?></span>
+                        <p><?= $this->formatarDataEnvido($data['send_date'])?></p>
+                    </div>
+                    <p><?= $data['message']?></p>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+}
+?>
