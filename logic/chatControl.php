@@ -1,5 +1,7 @@
 <?php
 
+include_once './dbControl.php';
+
 session_start();
 
 if (isset($_POST['clear']) && !empty($_POST['clear'])) {
@@ -40,31 +42,36 @@ class ChatControl
 
     public function getMessage()
     {
-        if (file_exists($this->filePath)) {
+        $db = new DbControl('messages.sqlite');
+        $db->select('m','messages');
+        
+        if(count($db->result()) > 0) 
+        {
+            foreach ($db->result() as $ln) 
+            {
+                $html = "
+                <span class='other-message bg-primary-subtle border border-success-subtle'>
+                    <b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: {$ln['send_date']}'>{$ln['user']}</b>:{$ln['message']}
+                </span><br>
+                ";
 
-            foreach (file($this->filePath) as $message) {
-                $hash      = md5($this->userName);
-                $myMessage = strpos($message, $hash);
-
-                if ($myMessage != false) {
-                    echo "<span class='own-message bg-success-subtle border border-success-subtle' id='$hash'>";
-                } else {
-                    echo "$message";
-                }
+                echo $html;
             }
-        } else {
-            echo "<p>Nenhuma mensagem ainda :(</p>";
+        } 
+        else 
+        {
+            echo "<p>Nenhuma mensagem ainda</p>";
         }
     }
 
-
     public function getUsersCount()
     {
-        if (file_exists($this->filePath)) {
+        if (file_exists($this->filePath)) 
+        {
+            $online = 0;
 
-            $online    = 0;
-
-            foreach (file($this->filePath) as $message) {
+            foreach (file($this->filePath) as $message) 
+            {
                 $desconnect = strpos($message, '6269d77081ed0d003f6f4fd002dae3a8');
                 $connect    = strpos($message, '04b6e1a104ba0ed5e7985abde3e13140');
 
@@ -77,23 +84,26 @@ class ChatControl
             }
 
             echo $online . ' Online';
-        } else {
+
+        } 
+        else 
+        {
             echo "0 Online";
         }
     }
 
-    public function sendMessage(string $text = "TESTE")
+    public function sendMessage(string $text)
     {
         $text = $this->clearString($text);
 
-        $hash = md5($this->userName);
+        $db = new DbControl('messages.sqlite');
 
-        $message = "
-        <span id='$hash' class='other-message bg-primary-subtle border border-success-subtle'>
-            <b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: " . date('d/m/Y H:i:s') . "'>$this->userName</b>: $text
-        </span><br>";
-
-        file_put_contents($this->filePath, $message . PHP_EOL, FILE_APPEND);
+        $db->insert('messages', [
+            $text,
+            date('Y-m-d H:i:s'),
+            $this->userName,
+            "A"
+        ]);
     }
 
     public function connectChat()

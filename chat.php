@@ -1,11 +1,13 @@
 <?php
 
-session_start();
+	session_start();
 
-if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
-	header('Location: ./index.php');
-}
+	if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+		header('Location: ./index.php');
+	}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -30,6 +32,7 @@ if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
 				<div class="online-circle mx-2"></div> <span id='numberOfUsers'><i class="fa fa-refresh fa-spin"></i> Online</span>
 			</div>
 		</header>
+		
 		<div class="chat-window" id="chat-window"></div>
 
 		<form id="chat-form">
@@ -44,5 +47,4 @@ if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
 	</main>
 </body>
 <script src="./public/js/chat.js"></script>
-
 </html>
