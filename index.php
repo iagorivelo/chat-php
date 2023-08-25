@@ -1,6 +1,6 @@
 <?php
 
-    include './logic/chatControl.php';
+    session_start();
 
     if(isset($_SESSION['username']) && !empty($_SESSION['username']))
     {
