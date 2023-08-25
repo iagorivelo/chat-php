@@ -10,7 +10,7 @@ body {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
-section a { /* Go to chat button */
+section a {
 
     text-decoration: none;
     color: black;

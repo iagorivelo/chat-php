@@ -1,20 +1,19 @@
-body {
+:root {
+    margin: 0px;
+    padding: 0px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
 
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background-color: #f4f4f4;
-
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .chat {
     width: 60%;
-    /* max-width: 400px; */
     background-color: #fff;
     border-radius: 10px;
     padding: 0px 20px 20px 20px;
@@ -31,18 +30,55 @@ body {
     scroll-behavior: smooth;
 }
 
-.own-message {
-    display: flex;
-    justify-content: flex-end;
-    margin: 2px;
-    border-radius: 10px 10px 0px 10px;
+.message {
+    margin: 8px;
 }
 
-.other-message {
+.message .own-message {
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.message .other-message {
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
-    margin: 2px;
-    border-radius: 0px 10px 10px 10px;
+}
+
+.own-message .content {
+    padding: 8px;
+    background-color: #069e2d;
+    border-radius: 5px;
+    color: #fff;
+    max-width: 300px;
+}
+
+.other-message .content {
+    padding: 8px;
+    background-color: #43c59e;
+    border-radius: 5px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+}
+
+.content .header-message {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.content span {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.content p {
+    font-size: 14px;
+    margin: 0px;
 }
 
 form {
@@ -58,14 +94,16 @@ form {
     border-radius: 5px;
 }
 
-.connect-message, .disconnect-message {
+.connect-message,
+.disconnect-message {
 
     display: flex;
     justify-content: center;
     margin: 2px;
 }
 
-.connect-message b, .disconnect-message b {
+.connect-message b,
+.disconnect-message b {
 
     border-radius: 5px;
     padding: 2px;
@@ -92,9 +130,12 @@ form {
 }
 
 @keyframes blink {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.2;
     }
+
     50% {
         opacity: 1;
     }

@@ -1,14 +1,9 @@
 <?php
 
-include_once './dbControl.php';
-
 session_start();
 
-if (isset($_POST['clear']) && !empty($_POST['clear'])) {
-    if ($_POST['clear'] == 'true') {
-        fclose(fopen('./static/messages.txt', "w"));
-    }
-}
+require_once __DIR__ . '/partialControl.php';
+require_once __DIR__ . '/dbControl.php';
 
 if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
     $chatControl = new ChatControl($_SESSION['username']);
@@ -18,7 +13,7 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
     }
 
     if (isset($_GET['getUsers']) && !empty($_GET['getUsers'])) {
-        $chatControl->getUsersCount();
+        // $chatControl->getUsersCount();
     }
 
     if (isset($_POST['message']) && !empty($_POST['message'])) {
@@ -27,17 +22,18 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
         }
     }
 } else {
-    header('Location: ./index.php');
+    header('Location: ../index.php');
 }
 
 class ChatControl
 {
     private string $userName;
-    private string $filePath  = './static/messages.txt';
+    private $partial;
 
     public function __construct(string $userName)
     {
         $this->userName = $userName;
+        $this->partial = new PartialControl();
     }
 
     public function getMessage()
@@ -49,11 +45,8 @@ class ChatControl
         {
             foreach ($db->result() as $ln) 
             {
-                $html = "
-                <span class='other-message bg-primary-subtle border border-success-subtle'>
-                    <b data-bs-toggle='tooltip' data-bs-placement='top' title='Send date: {$ln['send_date']}'>{$ln['user']}</b>:{$ln['message']}
-                </span><br>
-                ";
+                $ln['own'] = $this->userName == $ln['user'] ? true : false;
+                $html      = $this->partial->render('message', $ln);
 
                 echo $html;
             }
@@ -66,30 +59,7 @@ class ChatControl
 
     public function getUsersCount()
     {
-        if (file_exists($this->filePath)) 
-        {
-            $online = 0;
 
-            foreach (file($this->filePath) as $message) 
-            {
-                $desconnect = strpos($message, '6269d77081ed0d003f6f4fd002dae3a8');
-                $connect    = strpos($message, '04b6e1a104ba0ed5e7985abde3e13140');
-
-                if ($connect) {
-                    $online++;
-                }
-                if ($desconnect) {
-                    $online--;
-                }
-            }
-
-            echo $online . ' Online';
-
-        } 
-        else 
-        {
-            echo "0 Online";
-        }
     }
 
     public function sendMessage(string $text)

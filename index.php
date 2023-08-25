@@ -1,22 +1,3 @@
-<?php
-
-    session_start();
-
-    if(isset($_SESSION['username']) && !empty($_SESSION['username']))
-    {
-        $message = "
-        <span id='6269d77081ed0d003f6f4fd002dae3a8' class='disconnect-message'>
-            <b>".$_SESSION['username']." Desconectou-se</b>
-        </span><br>";
-    
-        file_put_contents('./logic/static/messages.txt', $message . PHP_EOL, FILE_APPEND);
-        
-        unset($_SESSION);
-        session_destroy();
-    }
-
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -32,7 +13,7 @@
     <h1>💬 Bate papo</h1>
 
     <section>
-	    <form method="POST" action="./connect.php">
+	    <form method="POST" action="./chat.php">
 	    	<input name="user" required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu belo nome' class='form-control' />
 	        <input class="btn btn-success" type="submit" value="Bater um papo" />
         </form>
