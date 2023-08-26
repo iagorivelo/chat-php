@@ -1,20 +1,22 @@
 <?php
 
-	session_start();
+	include_once  __DIR__.'/logic/ChatControl.php';
 
-	if (isset($_POST['user']) && !empty($_POST['user'])) {
+	if (isset($_POST['user']) && !empty($_POST['user'])) 
+	{
 		$_SESSION['username'] = $_POST['user'];
 
-		require_once './logic/chatControl.php';
-
-		$chatControl = new ChatControl($_POST['user']);
+		$chatControl = new ChatControl($_SESSION['username']);
 		$chatControl->connectChat();
-
-	} else {
-		header('Location: ./index.php');
+	} 
+	else 
+	{
+		$chatControl = new ChatControl($_SESSION['username']);
+		$chatControl->disconnectChat();
 	}
 	
-	if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+	if (!isset($_SESSION['username']) || empty($_SESSION['username'])) 
+	{
 		header('Location: ./index.php');
 	}
 

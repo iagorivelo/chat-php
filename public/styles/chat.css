@@ -46,6 +46,28 @@ body {
     justify-content: flex-start;
 }
 
+.connect-message .content {
+    font-size: 8px;
+    font-style: italic;
+    padding: 2px;
+    background-color: #45a08fb3;
+    border: 1px solid #55cfa7;
+    border-radius: 5px;
+    color: #fff;
+    max-width: 300px;
+}
+
+.disconnect-message .content {
+    font-size: 8px;
+    font-style: italic;
+    padding: 2px;
+    background-color: #a04545b3;
+    border: 1px solid #cf5555;
+    border-radius: 5px;
+    color: #fff;
+    max-width: 300px;
+}
+
 .own-message .content {
     padding: 8px;
     background-color: #069e2d;

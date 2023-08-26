@@ -1,6 +1,5 @@
 <?php
 
-
 class PartialControl
 {
     public function render(string $partialName, array $data)
