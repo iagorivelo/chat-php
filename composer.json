@@ -1,0 +1,15 @@
+{
+    "name": "iagorivelo/chat-php",
+    "autoload": {
+        "psr-4": {
+            "logic\\": "logic/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Iago Augusto",
+            "email": "iago.rivelo@gmail.com"
+        }
+    ],
+    "require": {}
+}

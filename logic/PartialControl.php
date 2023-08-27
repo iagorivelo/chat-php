@@ -1,5 +1,7 @@
 <?php
 
+namespace logic;
+
 class PartialControl
 {
     public function render(string $partialName, array $data)

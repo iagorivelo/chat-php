@@ -1,7 +1,11 @@
 <?php
 
-include_once __DIR__.'/DbControl.php';
-include_once __DIR__.'/PartialControl.php';
+namespace logic;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use logic\DbControl;
+use logic\PartialControl;
 
 session_start();
 

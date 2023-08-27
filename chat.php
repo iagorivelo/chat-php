@@ -1,6 +1,8 @@
 <?php
 
-	include_once  __DIR__.'/logic/ChatControl.php';
+	require __DIR__ . '/vendor/autoload.php';
+
+	use logic\ChatControl;
 
 	if (isset($_POST['user']) && !empty($_POST['user'])) 
 	{

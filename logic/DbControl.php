@@ -1,5 +1,9 @@
 <?php
 
+namespace logic;
+
+use SQLite3;
+
 class DbControl
 {
     protected $db,$query,$stringQuery;
