@@ -11,6 +11,14 @@ window.onload = (() => {
 
 setInterval(clearMessages, (1000 * 60) * 30); // 30 Min
 
+document.querySelector("#message").addEventListener("input", function(e) {
+	if(e.target.value) {
+		  document.querySelector("#write-message").style.display = "block";
+	} else {
+	    document.querySelector("#write-message").style.display = "none";
+	}
+});
+
 function updateChat() {
     getMessages();
 }
@@ -81,6 +89,8 @@ function getUsers() {
 
 function sendMessage() {
 
+    document.querySelector("#write-message").style.display = "none";
+    
     const messageInput = document.getElementById('message');
     const message      = messageInput.value.trim();
 
