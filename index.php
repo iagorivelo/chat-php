@@ -14,7 +14,7 @@
 
     <section>
 	    <form method="POST" action="./chat.php">
-	    	<input name="user" required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu belo nome' class='form-control' />
+	    	<input name="user" autofocus required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu belo nome' class='form-control' />
 	        <input class="btn btn-success" type="submit" value="Bater um papo" />
         </form>
     </section>
