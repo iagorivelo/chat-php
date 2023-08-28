@@ -332,6 +332,13 @@ form {
     transform: scale(1.1);
 }
 
+#write-message {
+	display: none;
+	position: absolute;
+	bottom: 46px;
+	left: 20px;
+}
+
 /*
 
 Bubles
