@@ -33,7 +33,7 @@ if (isset($data) && !empty($data))
                 <div class="message">
                     <div class="own-message">
                         <div class=" content">
-                            <p><?= $data['message']?></p>
+                            <p id='message-content'><?= $data['message']?></p>
                         </div>
                     </div>
                 </div>
@@ -44,12 +44,16 @@ if (isset($data) && !empty($data))
         ?>
             <div class="message">
                 <div class="other-message">
-                    <div class=" content">
+                    <div class="content">
                         <div class="header-message">
                             <span><?= $data['user']?></span>
-                            <p><?= $this->formatarDataEnvido($data['send_date'])?></p>
+                            <div class="action-buttons">
+                                <span><?= $this->formatarDataEnvido($data['send_date'])?></span>
+                                <button class="action-button" onclick="copyCode(this)"><i class="far fa-clipboard"></i></button>
+                                <button class="action-button" onclick="responseMessage(this)"><i class="far fa-paper-plane"></i></button>
+                            </div>
                         </div>
-                        <p><?= $data['message']?></p>
+                        <p id='message-content'><?= $data['message']?></p>
                     </div>
                 </div>
             </div>
