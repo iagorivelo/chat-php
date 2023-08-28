@@ -114,4 +114,9 @@ class DbControl
             );
         ");
     }
+
+    public function clearTable() 
+    {
+        $this->db->exec("DELETE FROM messages;");
+    }
 }
