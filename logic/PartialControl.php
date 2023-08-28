@@ -4,9 +4,13 @@ namespace logic;
 
 class PartialControl
 {
-    public function render(string $partialName, array $data)
+    public function render(string $partialName, array $data = NULL)
     {
-        extract($data);
+        if(isset($data) && !empty($data))
+        {
+            extract($data);
+        }
+        
         include '../public/partials/' . $partialName . '.phtml';
         return ob_get_clean();
     }

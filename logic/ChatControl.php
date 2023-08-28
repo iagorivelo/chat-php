@@ -2,16 +2,21 @@
 
 namespace logic;
 
+session_start();
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use logic\DbControl;
 use logic\PartialControl;
 
-session_start();
-
 if (isset($_SESSION['username']) && !empty($_SESSION['username'])) 
 {
     $chatControl = new ChatControl($_SESSION['username']);
+
+    if(isset($_POST['clear']) && !empty($_POST['clear']))
+    {
+        $chatControl->clearMessages();
+    }
 
     if (isset($_GET['getMessages']))
     {
@@ -60,14 +65,14 @@ class ChatControl
             foreach ($db->result() as $ln) 
             {
                 $ln['own'] = $this->userName == $ln['user'] ? true : false;
-                $html      = $this->partial->render('message', $ln);
+                $html = $this->partial->render('message', $ln);
 
                 echo $html;
             }
         } 
         else 
         {
-            echo "<p>Nenhuma mensagem ainda</p>";
+            echo $this->partial->render('no-messages');
         }
     }
 
@@ -76,10 +81,15 @@ class ChatControl
         $db = new DbControl('messages.sqlite');
 
         $db->select('m','messages');
-        $db->where("user = '$this->userName' AND user_status = 'A'");
+        $db->where("user_status = 'A'");
         $db->group('user');
 
-        echo count($db->result());
+        $result = $db->result();
+
+        echo json_encode([
+            'count' => count($result),
+            'list'  => $db->result()
+        ]);
     }
 
     public function sendMessage(string $text)
@@ -143,6 +153,12 @@ class ChatControl
         $db->fetch();
     }
     
+    public function clearMessages() 
+    {
+        $db = new DbControl('messages.sqlite');
+        $db->clearTable();
+    }
+
     private function clearString(string $string)
     {
         return stripslashes(strip_tags($string));

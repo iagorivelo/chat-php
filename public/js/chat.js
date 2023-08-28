@@ -4,7 +4,7 @@ document.getElementById("chat-form").addEventListener("submit", function (event)
 
 window.onload = (() => {
     setInterval(updateChat, 2000);
-    setInterval(getUsers ,2000);
+    setInterval(getUsers,2000);
     getMessages();
     getUsers();
 })();
@@ -18,19 +18,35 @@ function updateChat() {
 function clearMessages() {
 
     const xhr = new XMLHttpRequest();
+
     xhr.open('POST', 'logic/ChatControl.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send('&clear');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            getMessages();
+        }
+    };
+    xhr.send('clear=true');
 }
 
 function getMessages() {
 
     const chatWindow = document.getElementById('chat-window');
+
+    const isScrolledToBottom = chatWindow.scrollHeight - chatWindow.clientHeight <= chatWindow.scrollTop + 1;
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'logic/ChatControl.php?getMessages', true);
     xhr.onreadystatechange = function () {
+
         if (xhr.readyState === 4 && xhr.status === 200) {
+
             chatWindow.innerHTML = xhr.responseText;
+
+            if (isScrolledToBottom) {
+
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            } 
         }
     };
     xhr.send();
@@ -39,11 +55,25 @@ function getMessages() {
 function getUsers() {
 
     const onlineSpan = document.getElementById('numberOfUsers');
+    const onlineList = document.getElementById('users-list');
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'logic/ChatControl.php?getUsers', true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            onlineSpan.innerHTML = xhr.responseText+" Online";
+
+            const response = JSON.parse(xhr.responseText);
+
+            onlineSpan.innerHTML = response.count+" Online";
+
+            let html = "";
+
+            response.list.map((item) => {
+
+                html = html + "<div class='online-user'><p>"+item.user+"</p></div>";
+            })
+            
+            onlineList.innerHTML = html;
         }
     };
     xhr.send();
