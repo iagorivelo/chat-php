@@ -66,6 +66,7 @@
 
 		<form id="chat-form">
 			<div class="input-group">
+				<span id="write-message"><i class="fa-solid fa-ellipsis fa-beat fa-2xl"></i></span>
 				<input class='text-bar' maxlength="500" type="text" id="message" placeholder="Digite sua mensagem">
 				<button class='send-button btn' type="submit" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
 			</div>
