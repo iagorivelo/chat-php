@@ -78,7 +78,7 @@ function getUsers() {
 
             response.list.map((item) => {
 
-                html = html + "<div class='online-user'><p>"+item.user+"</p></div>";
+                html = html + "<div class='online-user'><p>"+item.user+"</p> <button class='action-button'><i class='fa fa-comment'></i></button></div>";
             })
             
             onlineList.innerHTML = html;
@@ -113,4 +113,24 @@ function sendMessage() {
 function scrollChat() {
     const chatWindow = document.getElementById('chat-window');
     chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function copyCode(button) {
+    const message = button.parentElement.parentElement.parentElement.querySelector('p');
+    const textArea = document.createElement('textarea');
+    textArea.value = message.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    button.textContent = 'Copiado!';
+    setTimeout(() => {
+        button.textContent = 'Copiar';
+    }, 2000);
+}
+
+function responseMessage(button) {
+    const message = button.parentElement.parentElement.parentElement.querySelector('p');
+    const input = document.getElementById('message');
+    input.value = message.textContent + ': ';
 }
