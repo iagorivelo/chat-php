@@ -8,7 +8,7 @@ class ChatController
 {
   public static function index()
   {
-    include_once "app/chat/View/user.php";
+    include_once "app/chat/View/user.phtml";
   }
 
   public static function mensagens()
@@ -18,7 +18,7 @@ class ChatController
       $chatModel->connect($_POST["user"]);
     }
 
-    include_once "app/chat/View/chat.php";
+    include_once "app/chat/View/chat.phtml";
   }
 
   public static function getMessages()
