@@ -12,9 +12,7 @@ class ChatModel
 
   public function connect($user)
   {
-    $this->userName = $user;
-
-    if ($this->verifyUsername()) {
+    if ($this->verifyUsername($user)) {
       header('Location: /');
     }
 
@@ -22,21 +20,35 @@ class ChatModel
 
     $_SESSION['username'] = $this->clearString($user);
 
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $this->userName = $_SESSION['username'];
 
-    $db->insert('messages', [
-      'message'      => "CONNECT",
-      'send_date'    => date('Y-m-d H:i:s'),
-      'user'         => $this->userName,
-      'user_status'  => "A",
-      'message_type' => "connect",
-      'img_url'      => null
-    ]);
+    if ($this->verificaExiste($this->userName) == 0) {
+      $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+
+      $db->insert('messages', [
+        'message'      => "CONNECT",
+        'send_date'    => date('Y-m-d H:i:s'),
+        'user'         => $this->userName,
+        'user_status'  => "A",
+        'message_type' => "connect",
+        'img_url'      => null
+      ]);
+    }
   }
   
   public function disconnect()
   {
       
+  }
+
+  public function verificaExiste($user)
+  {
+    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+
+    $db->select('m', 'messages');
+    $db->where("user = '" . $user . "' AND user_status = 'A'");
+
+    return count($db->result());
   }
 
   public function getMessages()
@@ -109,9 +121,9 @@ class ChatModel
     return stripslashes(strip_tags($string));
   }
 
-  private function verifyUsername()
+  private function verifyUsername(string $user)
   {
     $pattern = '~^[[:alnum:]-]+$~u';
-    return !isset($this->userName) || empty(trim($this->clearString($this->userName))) || ((bool) preg_match($pattern, trim($this->clearString($this->userName)))) == false;
+    return !isset($user) || empty(trim($this->clearString($user))) || ((bool) preg_match($pattern, trim($this->clearString($user)))) == false;
   }
 }
