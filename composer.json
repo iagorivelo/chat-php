@@ -2,7 +2,7 @@
     "name": "iagorivelo/chat-php",
     "autoload": {
         "psr-4": {
-            "logic\\": "logic/"
+            "app\\": "app/"
         }
     },
     "authors": [

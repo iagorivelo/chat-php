@@ -1,0 +1,55 @@
+<?php
+if (isset($data) && !empty($data)) {
+  if ($data['message_type'] == 'connect') {
+?>
+    <div class="message">
+      <div class="connect-message">
+        <div class=" content">
+          <p><?= $data['user'] ?> Conectou-se</p>
+        </div>
+      </div>
+    </div>
+  <?php
+  } elseif ($data['message_type'] == 'disconnect') {
+  ?>
+    <div class="message">
+      <div class="disconnect-message">
+        <div class=" content">
+          <p><?= $data['user'] ?> Desconectou-se</p>
+        </div>
+      </div>
+    </div>
+    <?php
+  } else {
+    if (isset($data['own']) && $data['own']) {
+    ?>
+      <div class="message">
+        <div class="own-message">
+          <div class=" content">
+            <p id='message-content'><?= $data['message'] ?></p>
+          </div>
+        </div>
+      </div>
+    <?php
+    } else {
+    ?>
+      <div class="message">
+        <div class="other-message">
+          <div class="content">
+            <div class="header-message">
+              <span><?= $data['user'] ?></span>
+              <div class="action-buttons">
+                <span><?= $this->formatarDataEnvido($data['send_date']) ?></span>
+                <button class="action-button" onclick="copyCode(this)"><i class="far fa-clipboard"></i></button>
+                <button class="action-button" onclick="responseMessage(this)"><i class="far fa-paper-plane"></i></button>
+              </div>
+            </div>
+            <p id='message-content'><?= $data['message'] ?></p>
+          </div>
+        </div>
+      </div>
+<?php
+    }
+  }
+}
+?>
