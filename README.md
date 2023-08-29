@@ -12,7 +12,11 @@ Clone o repositório para um pasta de sua preferência.
 ```bash
 git clone https://github.com/iagorivel0/chat-php.git
 
-cd chat-php
+cd chat-php/app
+
+mkdir db
+
+cd ..
 
 php -S localhost:3000
 ```
