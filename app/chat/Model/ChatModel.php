@@ -121,7 +121,7 @@ class ChatModel
     return stripslashes(strip_tags($string));
   }
 
-  private function verifyUsername($user)
+  private function verifyUsername(string $user)
   {
     $pattern = '~^[[:alnum:]-]+$~u';
     return !isset($user) || empty(trim($this->clearString($user))) || ((bool) preg_match($pattern, trim($this->clearString($user)))) == false;
