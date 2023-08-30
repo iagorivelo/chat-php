@@ -133,3 +133,16 @@ function responseMessage(button) {
   const input = document.getElementById('message');
   input.value = message.textContent + ': ';
 }
+
+function logout() {
+  const xhr = new XMLHttpRequest();
+
+  xhr.open('POST', 'logout', true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      window.location.reload();
+    }
+  };
+  xhr.send();
+}

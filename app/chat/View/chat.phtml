@@ -32,14 +32,14 @@
         </div>
 
         <div class="user-name-tag">
-          <p style="margin:0;">Jhon Doe</p>
+          <p style="margin:0;"><?= isset($_SESSION['username']) ? $_SESSION['username'] : '...' ?><i class="fa fa-user" style="margin-left:5px;"></i></p>
         </div>
 
         <div class="header-button change-theme" onclick="console.log('theme')">
           <i class="fa fa-moon"></i>
         </div>
 
-        <div class="header-button logout" onclick="console.log('logout')">
+        <div class="header-button logout" onclick="logout()">
           <i class="fa fa-arrow-left"></i>
         </div>
 

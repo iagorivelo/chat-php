@@ -16,8 +16,6 @@ class ChatModel
       header('Location: /');
     }
 
-    session_start();
-
     $_SESSION['username'] = $this->clearString($user);
 
     $this->userName = $_SESSION['username'];
@@ -36,9 +34,27 @@ class ChatModel
     }
   }
   
-  public function disconnect()
+  public function disconnect($user)
   {
-      
+    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+
+    $db->update('messages',[
+      'user_status' => "'I'"
+    ]);
+    $db->where("user = '" . $user . "' AND user_status = 'A'");
+
+    $db->fetch();
+
+    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+
+      $db->insert('messages', [
+        'message'      => "DISCONNECT",
+        'send_date'    => date('Y-m-d H:i:s'),
+        'user'         => $user,
+        'user_status'  => "I",
+        'message_type' => "disconnect",
+        'img_url'      => null
+      ]);
   }
 
   public function verificaExiste($user)
@@ -55,22 +71,25 @@ class ChatModel
   {
     session_start();
 
-    $this->partial  = new PartialControl();
-    $this->userName = $_SESSION['username'];
+    if(isset($_SESSION['username']) && !empty($_SESSION['username']))
+    {
+      $this->partial  = new PartialControl();
+      $this->userName = $_SESSION['username'];
 
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
-    $db->select('m', 'messages');
+      $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+      $db->select('m', 'messages');
 
-    if (count($db->result()) > 0) {
-      foreach ($db->result() as $ln) {
+      if (count($db->result()) > 0) {
+        foreach ($db->result() as $ln) {
 
-        $ln['own'] = $this->userName == $ln['user'] ? true : false;
-        $html = $this->partial->render('message', $ln);
-        
-        echo $html;
+          $ln['own'] = $this->userName == $ln['user'] ? true : false;
+          $html = $this->partial->render('message', $ln);
+          
+          echo $html;
+        }
+      } else {
+        echo $this->partial->render('no-messages');
       }
-    } else {
-      echo $this->partial->render('no-messages');
     }
   }
   
