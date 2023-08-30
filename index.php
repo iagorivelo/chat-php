@@ -8,12 +8,12 @@ $route = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 switch ($route) {
   case "/":
-    ChatController::index();
+    ChatController::home();
 
     break;
 
   case "/chat":
-    ChatController::mensagens();
+    ChatController::chat();
 
     break;
 
@@ -37,6 +37,11 @@ switch ($route) {
   
   case "/clearMessages":
     ChatController::clearMessages();
+
+    break;
+
+  case "/logout":
+    ChatController::logout();
 
     break;
 

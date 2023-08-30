@@ -97,6 +97,11 @@ class DataBaseConnect
     return $rows;
   }
 
+  public function stringQuery()
+  {
+    return $this->stringQuery;
+  }
+
   public function createTable()
   {
     $this->db->exec("

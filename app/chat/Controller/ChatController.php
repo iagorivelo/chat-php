@@ -6,13 +6,29 @@ use app\chat\Model\ChatModel;
 
 class ChatController
 {
-  public static function index()
+  public static function home()
   {
-    include_once "app/chat/View/user.phtml";
+    session_start();
+
+    if(!isset($_SESSION['username']) || empty($_SESSION['username']))
+    {
+      include_once "app/chat/View/home.phtml";
+    }
+    else
+    {
+      header('Location: /chat');
+    }
   }
 
-  public static function mensagens()
+  public static function chat()
   {
+    session_start();
+
+    if(!isset($_SESSION['username']) || empty($_SESSION['username']))
+    {
+      header('Location: /');
+    }
+
     if (isset($_POST["user"]) && !empty($_POST["user"])) {
       $chatModel = new ChatModel();
       $chatModel->connect($_POST["user"]);
@@ -45,5 +61,17 @@ class ChatController
   {
     $chatModel = new ChatModel();
     $chatModel->clearMessages();
+  }
+
+  public static function logout()
+  {
+    session_start();
+
+    $chatModel = new ChatModel();
+    $chatModel->disconnect($_SESSION['username']);
+
+    unset($_SESSION['username']);
+
+    header('Location: /');
   }
 }

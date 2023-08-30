@@ -89,20 +89,35 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 5px;
+  cursor: pointer;
+  transition: all .1s;
+}
 
+.header-button:hover {
+  background-color: #2371A8;
+  border-bottom: 1px solid #2351A0;
+  outline: 1px solid #236AB2;
+}
+
+.header-button:active {
+  background-color: #13558A;
+  border-bottom: 1px solid #124076;
+  outline: 1px solid #12558D;
+  transform: scale(.95);
 }
 
 .user-name-tag {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: default;
 }
 
 .user-name-tag p{
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2px;
+  padding: 2px 5px;
   border-radius: 5px;
   height: 100%;
   background-color: #5ccd89;
