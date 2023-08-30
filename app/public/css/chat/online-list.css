@@ -1,0 +1,73 @@
+
+.online-circle {
+    width: 8px;
+    height: 8px;
+    background-color: green;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+  
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.online-count {
+    font-size: 10px;
+}
+  
+.online-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #d4d4d4 !important;
+    outline: 1px solid #e9e9e9 !important;
+}
+
+.users-list {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: scroll;
+    border: 1px solid #cccccc7d;
+    border-bottom: 1px solid #cccccc;
+    border-top: none;
+    background-color: #f8f8f8 !important;
+    padding: 5px;
+    border-radius: 5px;
+    scroll-behavior: smooth;
+    scrollbar-color: #57ba7e transparent;
+    scrollbar-width: 5px;
+}
+
+.online-user {
+    background-color: #5ccd89;
+    border-bottom: 1px solid #50a280;
+    outline: 1px solid #55b387;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: white;
+}
+
+.online-user p {
+    margin: 0px 0px 0px 8px;
+}
+
+.online-user button {
+    margin: 0px 0px 0px 8px;
+    border: none !important;
+}
