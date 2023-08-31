@@ -26,4 +26,5 @@ php -S localhost:3000
 - [@valb-mig](https://www.github.com/valb-mig)
 - [@dayvsonspacca](https://www.github.com/dayvsonspacca)
 - [@iagorivel0](https://www.github.com/iagorivel0)
+- [@izadoraSantana](https://github.com/izadoraSantana)
 
