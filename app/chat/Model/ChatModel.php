@@ -145,4 +145,20 @@ class ChatModel
     $pattern = '~^[[:alnum:]-]+$~u';
     return !isset($user) || empty(trim($this->clearString($user))) || ((bool) preg_match($pattern, trim($this->clearString($user)))) == false;
   }
+  
+  public function getEmojis()
+  {
+    $apiKey = '194953e82591ea5ae5a8b1ad1bdfdf9c95f944e6';
+    $url = "https://emoji-api.com/emojis?access_key=$apiKey";
+
+    $response = file_get_contents($url);
+    $emojis = [];
+
+    if ($response)
+    {
+        $emojis = json_decode($response,true);
+    }
+                
+    return $emojis;
+  }
 }

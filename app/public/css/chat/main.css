@@ -217,6 +217,21 @@ form {
 	left: 20px;
 }
 
+#emojiModal {
+    display: none;
+    position: absolute;
+    bottom: 5vh;
+    right: 10%;
+    border: 1px solid grey;
+    width: 30vw;
+    height: 20vw;
+    overflow-y: auto;
+  }
+  
+  .emoji-btn {
+    border:none;
+  }
+
 @media (max-width: 768px) {
   .box-group {
     display: flex;

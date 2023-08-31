@@ -64,6 +64,27 @@
               <div class="input-group">
                 <span id="write-message"><i class="fa-solid fa-ellipsis fa-beat fa-2xl"></i></span>
                 <input class='text-bar' maxlength="500" type="text" id="message" placeholder="Digite sua mensagem">
+              <?php
+            if(!empty($emojis))
+            {
+                ?>
+                <!-- Botão de emojis -->
+                <button class="btn btn-light emoji-button" type="button" onclick="openModal()">
+                    <i class="fas fa-skull" style="color:purple"></i>
+                </button>
+
+                <!-- Modal de emojis -->
+                <div class="modal-body" id="emojiModal">
+                    <?php
+                        foreach ($emojis as $emoji)
+                        {
+                            echo "<button class='emoji-btn' type='button' data-emoji='".$emoji["character"]."'>" . $emoji["character"] . "</button>";
+                        }
+                    ?>
+                </div>
+                <?php
+            }
+            ?>
                 <button class='send-button btn' type="submit" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
               </div>
               <div class="position-relative">
@@ -79,4 +100,6 @@
     </div>
   </body>
   <script src="app/public/js/chat.js"></script>
+  <script src="app/public/js/emojis.js"></script>
+
 </html>
