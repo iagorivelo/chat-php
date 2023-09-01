@@ -7,62 +7,81 @@ use app\chat\View\partials\PartialControl;
 
 class ChatModel
 {
-  private string $userName;
   private $partial;
+
+  private string $userName;
+  private int    $userID;
+  private string $db_path = "app/db/db.sqlite";
 
   public function connect($user)
   {
-    if ($this->verifyUsername($user)) {
+    if ($this->verifyUsername($user)) 
+    {
       header('Location: /');
     }
 
     $_SESSION['username'] = $this->clearString($user);
-
     $this->userName = $_SESSION['username'];
 
-    if ($this->verificaExiste($this->userName) == 0) {
-      $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    if ($this->verificaExiste($this->userName) == 0) 
+    {
+      $db = new DataBaseConnect($this->db_path);
 
-      $db->insert('messages', [
-        'message'      => "CONNECT",
-        'send_date'    => date('Y-m-d H:i:s'),
-        'user'         => $this->userName,
+      $id = $db->insert('chat_users', [
+
+        'user_name'    => $this->userName,
+        'hash'         => "", // [Todo] - Fazer sistema de login
         'user_status'  => "A",
-        'message_type' => "connect",
-        'img_url'      => null
+        'last_update'  => date('Y-m-d H:i:s'),
+        'create_date'  => date('Y-m-d H:i:s')
+      ]);
+
+      $_SESSION['user_id'] = $id;
+      $this->userID = $_SESSION['user_id'];
+
+      $db = new DataBaseConnect($this->db_path);
+
+      $db->insert('chat_messages', [
+
+        'message_content' => "",
+        'send_date'       => date('Y-m-d H:i:s'),
+        'user_id'         => $this->userID,
+        'message_type'    => "connect",
+        'img_url'         => null
       ]);
     }
   }
   
-  public function disconnect($user)
+  public function disconnect($user_id)
   {
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
 
-    $db->update('messages',[
-      'user_status' => "'I'"
+    $db->update('chat_users',[
+      'user_status' => "'I'",
+      'last_update'  => "'".date('Y-m-d H:i:s')."'"
     ]);
-    $db->where("user = '" . $user . "' AND user_status = 'A'");
+    $db->where(" user_id = '" . $user_id . "' AND user_status = 'A' ");
 
     $db->fetch();
 
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
 
-      $db->insert('messages', [
-        'message'      => "DISCONNECT",
-        'send_date'    => date('Y-m-d H:i:s'),
-        'user'         => $user,
-        'user_status'  => "I",
-        'message_type' => "disconnect",
-        'img_url'      => null
-      ]);
+    $db->insert('chat_messages', [
+
+      'message_content' => "",
+      'send_date'       => date('Y-m-d H:i:s'),
+      'user_id'         => $user_id,
+      'message_type'    => "disconnect",
+      'img_url'         => null
+    ]);
   }
 
-  public function verificaExiste($user)
+  public function verificaExiste($user_name)
   {
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
 
-    $db->select('m', 'messages');
-    $db->where("user = '" . $user . "' AND user_status = 'A'");
+    $db->select('m', 'chat_users');
+    $db->where("user_name = $user_name");
 
     return count($db->result());
   }
@@ -74,20 +93,32 @@ class ChatModel
     if(isset($_SESSION['username']) && !empty($_SESSION['username']))
     {
       $this->partial  = new PartialControl();
+
       $this->userName = $_SESSION['username'];
+      $this->userID   = $_SESSION['user_id'];
 
-      $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
-      $db->select('m', 'messages');
+      $db = new DataBaseConnect($this->db_path);
 
-      if (count($db->result()) > 0) {
-        foreach ($db->result() as $ln) {
+      $db->select('m', 'chat_messages');
+      $messages = $db->result();
 
-          $ln['own'] = $this->userName == $ln['user'] ? true : false;
+      if (count($messages) > 0) 
+      {
+        foreach ($messages as $ln) 
+        {
+          $ln['own'] = $this->userID == $ln['user_id'] ? true : false;
+
+          $db->select('m', 'chat_users');
+          $db->where("user_id = ".$ln['user_id']);
+          $user = $db->result()[0];
+
+          $ln['user_name'] = $user['user_name'];
           $html = $this->partial->render('message', $ln);
-          
           echo $html;
         }
-      } else {
+      } 
+      else 
+      {
         echo $this->partial->render('no-messages');
       }
     }
@@ -98,28 +129,28 @@ class ChatModel
     session_start();
     
     $this->userName = $_SESSION['username'];
+    $this->userID   = $_SESSION['user_id'];
     
     $text = $this->clearString($text);
       
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
 
-    $db->insert('messages', [
-      'message'      => $text,
-      'send_date'    => date('Y-m-d H:i:s'),
-      'user'         => $this->userName,
-      'user_status'  => "A",
-      'message_type' => "text",
-      'img_url'      => null
+    $db->insert('chat_messages', [
+      'message_content' => $text,
+      'send_date'       => date('Y-m-d H:i:s'),
+      'user_id'         => $this->userID,
+      'message_type'    => "text",
+      'img_url'         => null
     ]);
   }
   
   public function getUsersCount()
   {
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
     
-    $db->select('m','messages');
+    $db->select('u','chat_users');
     $db->where("user_status = 'A'");
-    $db->group('user');
+    $db->group('user_id');
 
     $result = $db->result();
 
@@ -131,7 +162,7 @@ class ChatModel
   
   public function clearMessages()
   {
-    $db = new DataBaseConnect('messages.sqlite', 'app/db/messages.sqlite');
+    $db = new DataBaseConnect($this->db_path);
     $db->clearTable();
   }
 
