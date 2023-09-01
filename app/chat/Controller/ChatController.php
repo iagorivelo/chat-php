@@ -71,9 +71,10 @@ class ChatController
     session_start();
 
     $chatModel = new ChatModel();
-    $chatModel->disconnect($_SESSION['username']);
+    $chatModel->disconnect($_SESSION['user_id']);
 
     unset($_SESSION['username']);
+    unset($_SESSION['user_id']);
 
     header('Location: /');
   }
