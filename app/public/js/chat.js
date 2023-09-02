@@ -78,7 +78,9 @@ function getUsers() {
 
       response.list.map((item) => {
 
-        html = html + "<div class='online-user'><p>" + item.user + "</p> <button class='action-button'><i class='fa fa-comment'></i></button></div>";
+        let online_tag = item.user_id == response.own_id ? 'own-online-user' : 'online-user';
+
+        html = html + "<div class='" + online_tag + "'><p>" + item.user_name + "</p> <button class='action-button'><i class='fa fa-comment'></i></button></div>";
       })
 
       onlineList.innerHTML = html;

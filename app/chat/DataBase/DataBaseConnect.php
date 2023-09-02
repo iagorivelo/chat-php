@@ -24,6 +24,8 @@ class DataBaseConnect
     }
 
     $this->stringQuery = " SELECT $columnsStr FROM $table AS $table_tag ";
+
+    return $this;
   }
 
   public function update(string $table, array $setValues)
@@ -32,15 +34,20 @@ class DataBaseConnect
 
     foreach($setValues as $key => $value)
     {
+      $value = is_string($value) ? "'".$value."'" : $value;
+
       $arraySet[] = " $key = $value ";
     }
 
     $this->stringQuery .=  " UPDATE $table SET ".implode(', ', $arraySet)." ";
+
+    return $this;
   }
 
   public function where(string $whereQuery)
   {
     $this->stringQuery .=  " WHERE $whereQuery ";
+    return $this;
   }
 
   public function join(string $table_tag, string $table, string $connect_table, string $join_type = "")
@@ -55,35 +62,45 @@ class DataBaseConnect
 
   public function insert(string $table, array $values)
   {
-    $index_values = [];
-    $data_values  = [];
-
-    foreach($values as $key => $value)
+    if (empty($values)) 
     {
-      $index_values[] = "?";
-      $data_values[]  = $key;
+      return false;
     }
 
-    $this->stringQuery = " INSERT INTO $table (".implode(', ', $data_values).") VALUES (".implode(', ', $index_values).") ";
+    $columns      = implode(', ',array_keys($values));
+    $index_values = array_fill(0, count($values), '?');
+    $placeholders = implode(', ', $index_values);
 
-    $query = $this->db->prepare($this->stringQuery);
-
-    $i = 1;
-
-    foreach($values as $key => $value)
+    $this->stringQuery = "INSERT INTO $table ($columns) VALUES ($placeholders);";
+      
+    try 
     {
-      $query->bindValue($i, $value, SQLITE3_TEXT);
-      $i++;
+      $query = $this->db->prepare($this->stringQuery);
+
+      $i = 1;
+
+      foreach($values as $value) {
+
+        $query->bindValue($i, $value, SQLITE3_TEXT);
+        $i++;
+      }
+
+      $query->execute();
+
+      return $this->db->lastInsertRowID();
+
+    } catch (\Exception $e) 
+    {
+      echo "Erro na consulta: " . $e->getMessage();  
     }
 
-    $query->execute();
-
-    return $this->db->lastInsertRowID();  
+    return "";
   }
 
   public function fetch()
   {
     $this->db->exec($this->stringQuery.";");
+    $this->stringQuery = "";
   }
 
   public function result()

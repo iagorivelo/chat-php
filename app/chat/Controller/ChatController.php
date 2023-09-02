@@ -10,7 +10,7 @@ class ChatController
   {
     session_start();
 
-    if(!isset($_SESSION['username']) || empty($_SESSION['username']))
+    if(!isset($_SESSION['user_name']) || empty($_SESSION['user_name']))
     {
       include_once "app/chat/View/home.phtml";
     }
@@ -24,7 +24,7 @@ class ChatController
   {
     session_start();
 
-    if(!isset($_SESSION['username']) || empty($_SESSION['username']))
+    if(!isset($_SESSION['user_name']) || empty($_SESSION['user_name']))
     {
       header('Location: /');
     }
@@ -33,10 +33,8 @@ class ChatController
       $chatModel = new ChatModel();
       $chatModel->connect($_POST["user"]);
     }
-    
-    $chatModel = new ChatModel();
-    $emojis = $chatModel->getEmojis();
 
+    $chatModel = new ChatModel();
     include_once "app/chat/View/chat.phtml";
   }
 
@@ -73,7 +71,7 @@ class ChatController
     $chatModel = new ChatModel();
     $chatModel->disconnect($_SESSION['user_id']);
 
-    unset($_SESSION['username']);
+    unset($_SESSION['user_name']);
     unset($_SESSION['user_id']);
 
     header('Location: /');
