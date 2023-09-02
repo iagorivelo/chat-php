@@ -52,9 +52,21 @@
 }
 
 .online-user {
+
+    background-color: #3993DD;
+    border-bottom: 1px solid #3568c0;
+    outline: 1px solid #357AC9;
+}
+
+.own-online-user {
+    
     background-color: #5ccd89;
     border-bottom: 1px solid #50a280;
     outline: 1px solid #55b387;
+}
+
+.online-user, .own-online-user {
+
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
@@ -63,11 +75,15 @@
     color: white;
 }
 
-.online-user p {
+.online-user p, .own-online-user p {
     margin: 0px 0px 0px 8px;
 }
 
-.online-user button {
+.own-online-user button {
+    display: none;
+}
+
+.online-user button, .own-online-user button {
     margin: 0px 0px 0px 8px;
     border: none !important;
 }

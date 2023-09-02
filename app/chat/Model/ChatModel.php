@@ -8,36 +8,50 @@ use app\chat\View\partials\PartialControl;
 class ChatModel
 {
   private $partial;
-
-  private string $userName;
-  private int    $userID;
   private string $db_path = "app/db/db.sqlite";
+  private array  $user;
 
-  public function connect($user)
+  public function __construct()
+  {
+    $this->partial = new PartialControl();
+
+    $this->user['data'] = [
+      'user_id'   => '',
+      'user_name' => ''
+    ];
+  }
+
+  public function connect(string $user)
   {
     if ($this->verifyUsername($user)) 
     {
       header('Location: /');
     }
 
-    $_SESSION['username'] = $this->clearString($user);
-    $this->userName = $_SESSION['username'];
+    $_SESSION['user_name'] = $this->clearString($user);
 
-    if ($this->verificaExiste($this->userName) == 0) 
+    $this->user['data'] = [
+      'user_name' => $_SESSION['user_name']
+    ];
+
+    if (!$this->verificaExisteUsuario($this->user['data']['user_name'])) 
     {
       $db = new DataBaseConnect($this->db_path);
 
-      $id = $db->insert('chat_users', [
+      $id_user = $db->insert('chat_users', [
 
-        'user_name'    => $this->userName,
-        'hash'         => "", // [Todo] - Fazer sistema de login
+        'user_name'    => $this->user['data']['user_name'],
+        'hash'         => "0", // [Todo] - Fazer sistema de login
         'user_status'  => "A",
         'last_update'  => date('Y-m-d H:i:s'),
         'create_date'  => date('Y-m-d H:i:s')
       ]);
 
-      $_SESSION['user_id'] = $id;
-      $this->userID = $_SESSION['user_id'];
+      $_SESSION['user_id'] = $id_user;
+
+      $this->user['data'] = [
+        'user_id' => $_SESSION['user_id']
+      ];
 
       $db = new DataBaseConnect($this->db_path);
 
@@ -45,58 +59,85 @@ class ChatModel
 
         'message_content' => "",
         'send_date'       => date('Y-m-d H:i:s'),
-        'user_id'         => $this->userID,
+        'user_id'         => $this->user['data']['user_id'],
         'message_type'    => "connect",
         'img_url'         => null
       ]);
+    }
+    else
+    {
+      $db = new DataBaseConnect($this->db_path);
+
+      $db->update('chat_users', [
+        'user_status'  => "A",
+        'last_update'  => date('Y-m-d H:i:s')
+      ])->where("user_name = '".$this->user['data']['user_name']."'")->fetch();
+
+      $db->select('u','chat_users')
+      ->where("user_name = '".$this->user['data']['user_name']."'");
+
+      $user = $db->result()[0];
+
+      $this->user['data'] = [
+        'user_id' => $user['user_id']
+      ];
+
+      $_SESSION['user_id'] = $user['user_id'];
     }
   }
   
   public function disconnect($user_id)
   {
-    $db = new DataBaseConnect($this->db_path);
+    if(isset($user_id) && !empty($user_id))
+    {
+      $db = new DataBaseConnect($this->db_path);
 
-    $db->update('chat_users',[
-      'user_status' => "'I'",
-      'last_update'  => "'".date('Y-m-d H:i:s')."'"
-    ]);
-    $db->where(" user_id = '" . $user_id . "' AND user_status = 'A' ");
+      $db->update('chat_users', [
+        'user_status' => "I",
+        'last_update' => date('Y-m-d H:i:s')
+      ])
+      ->where(" user_id = '$user_id' AND user_status = 'A' ")
+      ->fetch();
 
-    $db->fetch();
+      $db->insert('chat_messages', [
+        'message_content' => "",
+        'send_date'       => date('Y-m-d H:i:s'),
+        'user_id'         => $user_id,
+        'message_type'    => "disconnect",
+        'img_url'         => null
+      ]);
+    }
+    else 
+    {
+      unset($_SESSION['user_name']);
+      unset($_SESSION['user_id']);
 
-    $db = new DataBaseConnect($this->db_path);
-
-    $db->insert('chat_messages', [
-
-      'message_content' => "",
-      'send_date'       => date('Y-m-d H:i:s'),
-      'user_id'         => $user_id,
-      'message_type'    => "disconnect",
-      'img_url'         => null
-    ]);
+      header('Location: /');
+    }
   }
 
-  public function verificaExiste($user_name)
+  private function verificaExisteUsuario(string $user_name)
   {
     $db = new DataBaseConnect($this->db_path);
 
-    $db->select('m', 'chat_users');
-    $db->where("user_name = $user_name");
+    $db->select('m', 'chat_users')
+    ->where("user_name = '$user_name'");
 
-    return count($db->result());
+    return count($db->result()) > 0 ? true : false;
   }
 
   public function getMessages()
   {
     session_start();
 
-    if(isset($_SESSION['username']) && !empty($_SESSION['username']))
+    $this->user['data'] = [
+
+      'user_id'   => isset($_SESSION['user_id'])   ? $_SESSION['user_id']   : '',
+      'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''
+    ];   
+
+    if(isset($this->user['data']['user_name']) && !empty($this->user['data']['user_name']))
     {
-      $this->partial  = new PartialControl();
-
-      $this->userName = $_SESSION['username'];
-      $this->userID   = $_SESSION['user_id'];
-
       $db = new DataBaseConnect($this->db_path);
 
       $db->select('m', 'chat_messages');
@@ -104,16 +145,18 @@ class ChatModel
 
       if (count($messages) > 0) 
       {
-        foreach ($messages as $ln) 
+        foreach ($messages as $message) 
         {
-          $ln['own'] = $this->userID == $ln['user_id'] ? true : false;
+          $message['own'] = $this->user['data']['user_id'] == $message['user_id'] ? true : false;
 
-          $db->select('m', 'chat_users');
-          $db->where("user_id = ".$ln['user_id']);
-          $user = $db->result()[0];
+          $db->select('m', 'chat_users')
+          ->where("user_id = ".$message['user_id']);
 
-          $ln['user_name'] = $user['user_name'];
-          $html = $this->partial->render('message', $ln);
+          $user = $db->result();
+
+          $message['user_name'] = $user[0]['user_name'];
+          $html = $this->partial->render('message', $message);
+
           echo $html;
         }
       } 
@@ -127,10 +170,13 @@ class ChatModel
   public function sendMessage(string $text)
   {
     session_start();
-    
-    $this->userName = $_SESSION['username'];
-    $this->userID   = $_SESSION['user_id'];
-    
+
+    $this->user['data'] = [
+
+      'user_id'   => $_SESSION['user_id'],
+      'user_name' => $_SESSION['user_name']
+    ]; 
+
     $text = $this->clearString($text);
       
     $db = new DataBaseConnect($this->db_path);
@@ -138,7 +184,7 @@ class ChatModel
     $db->insert('chat_messages', [
       'message_content' => $text,
       'send_date'       => date('Y-m-d H:i:s'),
-      'user_id'         => $this->userID,
+      'user_id'         => $this->user['data']['user_id'],
       'message_type'    => "text",
       'img_url'         => null
     ]);
@@ -146,17 +192,26 @@ class ChatModel
   
   public function getUsersCount()
   {
+    session_start();
+
+    $this->user['data'] = [
+
+      'user_id'   => isset($_SESSION['user_id'])   ? $_SESSION['user_id']   : '',
+      'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''
+    ]; 
+
     $db = new DataBaseConnect($this->db_path);
     
-    $db->select('u','chat_users');
-    $db->where("user_status = 'A'");
-    $db->group('user_id');
+    $db->select('u','chat_users')
+    ->where("user_status = 'A'")
+    ->group('user_id');
 
     $result = $db->result();
 
     echo json_encode([
-      'count' => count($result),
-      'list'  => $db->result()
+      'own_id' => $this->user['data']['user_id'],
+      'count'  => count($result),
+      'list'   => $result
     ]);
   }
   
