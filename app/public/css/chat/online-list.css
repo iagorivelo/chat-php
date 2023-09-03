@@ -28,10 +28,9 @@
     gap: 10px;
     border-radius: 10px;
     padding: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     background-color: #f3f3f3;
     border-bottom: 1px solid #d4d4d4 !important;
-    outline: 1px solid #e9e9e9 !important;
+    outline: 1px solid #c7c7c7;
 }
 
 .users-list {
@@ -39,6 +38,7 @@
     gap: 10px;
     flex-direction: column;
     height: 100%;
+    width: 100px;
     overflow-y: scroll;
     border: 1px solid #cccccc7d;
     border-bottom: 1px solid #cccccc;
@@ -53,16 +53,18 @@
 
 .online-user {
 
-    background-color: #3993DD;
-    border-bottom: 1px solid #3568c0;
-    outline: 1px solid #357AC9;
+    background-color: #5c9acd;
+    border-bottom: 2px solid #548ebd;
+    border-right:  2px solid #548ebd;
+    outline: 2px solid #405e8a;
 }
 
 .own-online-user {
     
     background-color: #5ccd89;
-    border-bottom: 1px solid #50a280;
-    outline: 1px solid #55b387;
+    border-bottom: 2px solid #54c07f;
+    border-right:  2px solid #54c07f;
+    outline: 2px solid #408a6b;
 }
 
 .online-user, .own-online-user {
@@ -86,4 +88,18 @@
 .online-user button, .own-online-user button {
     margin: 0px 0px 0px 8px;
     border: none !important;
+}
+
+body.dark .online-list {
+
+    background-color: #141414;
+    border-bottom: 1px solid #0e0e0e !important;
+    outline: 1px solid #0f0f0f;
+}
+
+body.dark .users-list {
+
+    border: 1px solid #0c0c0c;
+    border-bottom: 1px solid #141414;
+    background-color: #1a1a1a !important;
 }
