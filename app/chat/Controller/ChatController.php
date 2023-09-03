@@ -35,6 +35,8 @@ class ChatController
     }
 
     $chatModel = new ChatModel();
+    $emojis = $chatModel->getEmojis();
+    
     include_once "app/chat/View/chat.phtml";
   }
 
