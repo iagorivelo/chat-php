@@ -1,5 +1,5 @@
-
 .online-circle {
+
     width: 8px;
     height: 8px;
     background-color: green;
@@ -8,6 +8,7 @@
 }
   
 @keyframes blink {
+
     0%,
     100% {
         opacity: 0.2;
@@ -19,10 +20,12 @@
 }
 
 .online-count {
+
     font-size: 10px;
 }
   
 .online-list {
+
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -33,25 +36,37 @@
     outline: 1px solid #c7c7c7;
 }
 
+.users-list::-webkit-scrollbar {
+    display: none;
+}
+
 .users-list {
+
     display: flex;
     gap: 10px;
     flex-direction: column;
     height: 100%;
     width: 100px;
-    overflow-y: scroll;
+    word-break: break-all;
     border: 1px solid #cccccc7d;
     border-bottom: 1px solid #cccccc;
     border-top: none;
     background-color: #f8f8f8 !important;
     padding: 5px;
     border-radius: 5px;
+
+    /* Scrollbar */
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     scroll-behavior: smooth;
     scrollbar-color: #57ba7e transparent;
     scrollbar-width: 5px;
+    overflow-y: scroll;
 }
 
 .online-user {
+
 
     background-color: #5c9acd;
     border-bottom: 2px solid #548ebd;
