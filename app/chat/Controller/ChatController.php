@@ -10,13 +10,21 @@ class ChatController
   {
     session_start();
 
+    $error = False;
+
+    if(isset($_SESSION['user_name']) && !empty($_SESSION['user_name']))
+    {
+      header('Location: /chat');
+    }
+
+    if(isset($_GET['Error']) && !empty($_GET['Error']))
+    {
+      $error = True;
+    }
+
     if(!isset($_SESSION['user_name']) || empty($_SESSION['user_name']))
     {
       include_once "app/chat/View/home.phtml";
-    }
-    else
-    {
-      header('Location: /chat');
     }
   }
 
@@ -29,15 +37,21 @@ class ChatController
       header('Location: /');
     }
 
-    if (isset($_POST["user"]) && !empty($_POST["user"])) {
-      $chatModel = new ChatModel();
-      $chatModel->connect($_POST["user"]);
+    if((isset($_POST['user']) && strlen($_POST['user']) > 20) || (isset($_SESSION['user_name']) && strlen($_SESSION['user_name']) > 20))
+    {
+      unset($_SESSION['user_name']);
+      header('Location: /?Error=NameLength');
     }
-
-    $chatModel = new ChatModel();
-    $emojis = $chatModel->getEmojis();
-    
-    include_once "app/chat/View/chat.phtml";
+    else
+    {
+      $chatModel = new ChatModel();
+      $chatModel->connect(isset($_POST["user"]) && !empty($_POST["user"]) ? $_POST["user"] : (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : NULL));
+  
+      $chatModel = new ChatModel();
+      $emojis = $chatModel->getEmojis();
+  
+      include_once "app/chat/View/chat.phtml";
+    }
   }
 
   public static function getMessages()
@@ -76,6 +90,6 @@ class ChatController
     unset($_SESSION['user_name']);
     unset($_SESSION['user_id']);
 
-    header('Location: /');
+    header('Location: /?Logout');
   }
 }
