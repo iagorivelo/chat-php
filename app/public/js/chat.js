@@ -80,7 +80,7 @@ function getUsers() {
 
         let online_tag = item.user_id == response.own_id ? 'own-online-user' : 'online-user';
 
-        html = html + "<div class='" + online_tag + "'><p>" + item.user_name + "</p> <button class='action-button'><i class='fa fa-comment'></i></button></div>";
+        html = html + "<div class='" + online_tag + "'><span>" + item.user_name + "</span> <button class='action-button'><i class='fa fa-comment'></i></button></div>";
       })
 
       onlineList.innerHTML = html;
@@ -95,6 +95,8 @@ function sendMessage() {
 
   const messageInput = document.getElementById('message');
   const message = messageInput.value.trim();
+  
+  messageInput.value = '';
 
   if (message !== '') {
     const xhr = new XMLHttpRequest();
