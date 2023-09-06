@@ -1,4 +1,5 @@
 body {
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,6 +10,7 @@ body {
 }
 
 section a {
+
   text-decoration: none;
   color: black;
   padding: 5px;
@@ -17,9 +19,41 @@ section a {
 }
 
 form {
+
   display: flex;
   justify-content: center;
   flex-direction: column;
+}
+
+.text-bar {
+
+  display: flex;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  width: 100%;
+  outline: none;
+  border: 2px solid #c7c7c7;
+  border-bottom: 2px solid #cccccc;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.error-input {
+
+  background-color: #ff00003b;
+  border: 2px solid #ff000070;
+
+  :hover {
+    background-color: #ff00003b;
+    border: 2px solid #ff000070;
+  }
+
+  :active {
+    background-color: #ff00003b;
+    border: 2px solid #ff000070;
+  }
 }
 
 .enter-button {

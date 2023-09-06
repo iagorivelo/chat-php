@@ -21,68 +21,88 @@ class ChatModel
     ];
   }
 
-  public function connect(string $user)
-  {
-    if ($this->verifyUsername($user)) 
+  public function connect($user)
+  { 
+    if(isset($user) && !empty($user))
     {
-      header('Location: /');
-    }
+      if($this->verifyUsername($user) == True) 
+      {
+        unset($_SESSION['user_name']);
+        header('Location: /?Error=User');
+      }
+      else
+      {
+        $_SESSION['user_name'] = $this->clearString($user);
 
-    $_SESSION['user_name'] = $this->clearString($user);
+        $this->user['data'] = [
+          'user_name' => $_SESSION['user_name']
+        ];
+  
+        if (!$this->verificaExisteUsuario($this->user['data']['user_name'])) 
+        {
+          $db = new DataBaseConnect($this->db_path);
+  
+          $id_user = $db->insert('chat_users', [
+  
+            'user_name'    => $this->user['data']['user_name'],
+            'hash'         => "0", // [Todo] - Fazer sistema de login
+            'user_status'  => "A",
+            'last_update'  => date('Y-m-d H:i:s'),
+            'create_date'  => date('Y-m-d H:i:s')
+          ]);
+  
+          $_SESSION['user_id'] = $id_user;
+  
+          $this->user['data'] = [
+            'user_id' => $_SESSION['user_id']
+          ];
+  
+          $db = new DataBaseConnect($this->db_path);
+  
+          $db->insert('chat_messages', [
+  
+            'message_content' => "",
+            'send_date'       => date('Y-m-d H:i:s'),
+            'user_id'         => $this->user['data']['user_id'],
+            'message_type'    => "connect",
+            'img_url'         => null
+          ]);
+        }
+        else
+        {
+          if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id']))
+          {
+            $db = new DataBaseConnect($this->db_path);
 
-    $this->user['data'] = [
-      'user_name' => $_SESSION['user_name']
-    ];
+            $db->select('u','chat_users')
+            ->where("user_name = '".$this->user['data']['user_name']."'");
+    
+            $user = $db->result()[0];
+    
+            $this->user['data'] = [
+              'user_id' => $user['user_id']
+            ];
+    
+            $_SESSION['user_id'] = $user['user_id'];
 
-    if (!$this->verificaExisteUsuario($this->user['data']['user_name'])) 
-    {
-      $db = new DataBaseConnect($this->db_path);
+            $db->insert('chat_messages', [
+  
+              'message_content' => "",
+              'send_date'       => date('Y-m-d H:i:s'),
+              'user_id'         => $this->user['data']['user_id'],
+              'message_type'    => "connect",
+              'img_url'         => null
+            ]);
+          }
 
-      $id_user = $db->insert('chat_users', [
-
-        'user_name'    => $this->user['data']['user_name'],
-        'hash'         => "0", // [Todo] - Fazer sistema de login
-        'user_status'  => "A",
-        'last_update'  => date('Y-m-d H:i:s'),
-        'create_date'  => date('Y-m-d H:i:s')
-      ]);
-
-      $_SESSION['user_id'] = $id_user;
-
-      $this->user['data'] = [
-        'user_id' => $_SESSION['user_id']
-      ];
-
-      $db = new DataBaseConnect($this->db_path);
-
-      $db->insert('chat_messages', [
-
-        'message_content' => "",
-        'send_date'       => date('Y-m-d H:i:s'),
-        'user_id'         => $this->user['data']['user_id'],
-        'message_type'    => "connect",
-        'img_url'         => null
-      ]);
-    }
-    else
-    {
-      $db = new DataBaseConnect($this->db_path);
-
-      $db->update('chat_users', [
-        'user_status'  => "A",
-        'last_update'  => date('Y-m-d H:i:s')
-      ])->where("user_name = '".$this->user['data']['user_name']."'")->fetch();
-
-      $db->select('u','chat_users')
-      ->where("user_name = '".$this->user['data']['user_name']."'");
-
-      $user = $db->result()[0];
-
-      $this->user['data'] = [
-        'user_id' => $user['user_id']
-      ];
-
-      $_SESSION['user_id'] = $user['user_id'];
+          $db = new DataBaseConnect($this->db_path);
+  
+          $db->update('chat_users', [
+            'user_status'  => "A",
+            'last_update'  => date('Y-m-d H:i:s')
+          ])->where("user_name = '".$this->user['data']['user_name']."'")->fetch();
+        }
+      }
     }
   }
   

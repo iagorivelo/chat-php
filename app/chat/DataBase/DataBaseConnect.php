@@ -117,6 +117,8 @@ class DataBaseConnect
       }
     }
 
+    $this->stringQuery = "";
+
     return $rows;
   }
 
@@ -167,6 +169,7 @@ class DataBaseConnect
       "user_name"    => "TEXT",
       "hash"         => "TEXT",
       "user_status"  => "TEXT",
+      "user_theme"   => "TEXT",
       "last_update"  => "DATETIME",
       "create_date"  => "DATETIME"
     ]);
