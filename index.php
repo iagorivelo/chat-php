@@ -46,7 +46,7 @@ switch ($route) {
     break;
 
   default:
-    echo "ERROR 404";
+    ChatController::error404();
 
     break;
 }

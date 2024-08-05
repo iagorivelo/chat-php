@@ -92,4 +92,9 @@ class ChatController
 
     header('Location: /?Logout');
   }
+
+  public static function error404() 
+  {
+    include_once "app/chat/View/404.phtml";
+  }
 }
