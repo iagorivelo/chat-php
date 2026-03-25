@@ -13,11 +13,56 @@
   <body>
     <h1>💬 Bate papo</h1>
     <section>
-      <form method="POST" action="chat">
-        <input name="user" autofocus required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu belo nome' class='<?= $error ? "error-input" : "" ?> text-bar' />
-        <input name="password" required id="password" style="margin-bottom: 10px;" type='password' placeholder='Digite seu belo nome' class='<?= $error ? "error-input" : "" ?> text-bar' />
-        <input class="enter-button" type="submit" value="Bater um papo" />
+      <form method="POST" action="authenticate" id="authForm">
+        <input type="hidden" name="action" id="action" value="login" />
+        <input name="user" autofocus required id="user" style="margin-bottom: 10px;" type='text' placeholder='Digite seu nome de usuário' class='<?= $error ? "error-input" : "" ?> text-bar' maxlength="20" />
+        <input name="password" required id="password" style="margin-bottom: 10px;" type='password' placeholder='Digite sua senha' class='<?= $error ? "error-input" : "" ?> text-bar' minlength="6" />
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <input class="enter-button" type="submit" value="Entrar" style="flex: 1;" onclick="setAction('login')" />
+          <input class="enter-button" type="submit" value="Registrar" style="flex: 1; background-color: #28a745;" onclick="setAction('register')" />
+        </div>
+        
+        <?php if($error): ?>
+        <p style="color: #dc3545; text-align: center; margin-top: 10px;">
+          <?php
+            $errorMsg = 'Erro desconhecido';
+            if(isset($_GET['Error'])) {
+              switch($_GET['Error']) {
+                case 'User':
+                  $errorMsg = 'Nome de usuário inválido';
+                  break;
+                case 'UserNotFound':
+                  $errorMsg = 'Usuário não encontrado';
+                  break;
+                case 'InvalidPassword':
+                  $errorMsg = 'Senha incorreta';
+                  break;
+                case 'UserExists':
+                  $errorMsg = 'Usuário já existe';
+                  break;
+                case 'PasswordLength':
+                  $errorMsg = 'Senha deve ter no mínimo 6 caracteres';
+                  break;
+                case 'NameLength':
+                  $errorMsg = 'Nome de usuário muito longo (máx. 20 caracteres)';
+                  break;
+                case 'MissingData':
+                  $errorMsg = 'Dados incompletos';
+                  break;
+              }
+            }
+            echo $errorMsg;
+          ?>
+        </p>
+        <?php endif; ?>
       </form>
     </section>
+    
+    <script>
+      function setAction(action) {
+        document.getElementById('action').value = action;
+      }
+    </script>
   </body>
 </html>
