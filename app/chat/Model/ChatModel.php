@@ -4,6 +4,7 @@ namespace app\chat\Model;
 
 use app\chat\DataBase\DataBaseConnect;
 use app\chat\View\partials\PartialControl;
+use app\chat\Helper\AuthHelper;
 
 class ChatModel
 {
@@ -21,91 +22,101 @@ class ChatModel
     ];
   }
 
-  public function connect($user)
-  { 
-    if(isset($user) && !empty($user))
+  /**
+   * Registra um novo usuário com autenticação segura
+   */
+  public function register(string $user, string $password): array
+  {
+    $user = AuthHelper::sanitizeInput($user);
+
+    if($this->verifyUsername($user) == True) 
     {
-      if($this->verifyUsername($user) == True) 
-      {
-        unset($_SESSION['user_name']);
-        header('Location: /?Error=User');
-      }
-      else
-      {
-        $_SESSION['user_name'] = $this->clearString($user);
-
-        $this->user['data'] = [
-          'user_name' => $_SESSION['user_name']
-        ];
-  
-        if (!$this->verificaExisteUsuario($this->user['data']['user_name'])) 
-        {
-          $db = new DataBaseConnect($this->db_path);
-  
-          $id_user = $db->insert('chat_users', [
-  
-            'user_name'    => $this->user['data']['user_name'],
-            'hash'         => "0", // [Todo] - Fazer sistema de login
-            'user_status'  => "A",
-            'last_update'  => date('Y-m-d H:i:s'),
-            'create_date'  => date('Y-m-d H:i:s')
-          ]);
-  
-          $_SESSION['user_id'] = $id_user;
-  
-          $this->user['data'] = [
-            'user_id' => $_SESSION['user_id']
-          ];
-  
-          $db = new DataBaseConnect($this->db_path);
-  
-          $db->insert('chat_messages', [
-  
-            'message_content' => "",
-            'send_date'       => date('Y-m-d H:i:s'),
-            'user_id'         => $this->user['data']['user_id'],
-            'message_type'    => "connect",
-            'img_url'         => null
-          ]);
-        }
-        else
-        {
-          if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id']))
-          {
-            $db = new DataBaseConnect($this->db_path);
-
-            $db->select('u','chat_users')
-            ->where("user_name = '".$this->user['data']['user_name']."'");
-    
-            $user = $db->result()[0];
-    
-            $this->user['data'] = [
-              'user_id' => $user['user_id']
-            ];
-    
-            $_SESSION['user_id'] = $user['user_id'];
-
-            $db->insert('chat_messages', [
-  
-              'message_content' => "",
-              'send_date'       => date('Y-m-d H:i:s'),
-              'user_id'         => $this->user['data']['user_id'],
-              'message_type'    => "connect",
-              'img_url'         => null
-            ]);
-          }
-
-          $db = new DataBaseConnect($this->db_path);
-  
-          $db->update('chat_users', [
-            'user_status'  => "A",
-            'last_update'  => date('Y-m-d H:i:s')
-          ])->where("user_name = '".$this->user['data']['user_name']."'")->fetch();
-        }
-      }
+      return ['success' => false, 'error' => 'User'];
     }
+
+    if(strlen($password) < 6)
+    {
+      return ['success' => false, 'error' => 'PasswordLength'];
+    }
+
+    if ($this->verificaExisteUsuario($user)) 
+    {
+      return ['success' => false, 'error' => 'UserExists'];
+    }
+
+    $password_hash = AuthHelper::hashPassword($password);
+
+    $db = new DataBaseConnect($this->db_path);
+    $id_user = $db->insert('chat_users', [
+      'user_name'    => $user,
+      'hash'         => $password_hash,
+      'user_status'  => "A",
+      'last_update'  => date('Y-m-d H:i:s'),
+      'create_date'  => date('Y-m-d H:i:s')
+    ]);
+
+    AuthHelper::createAuthSession($id_user, $user);
+
+    $db->insert('chat_messages', [
+      'message_content' => "",
+      'send_date'       => date('Y-m-d H:i:s'),
+      'user_id'         => $id_user,
+      'message_type'    => "connect",
+      'img_url'         => null
+    ]);
+
+    return ['success' => true, 'user_id' => $id_user];
   }
-  
+
+  /**
+   * Realiza login do usuário com autenticação segura
+   */
+  public function login(string $user, string $password): array
+  {
+    $user = AuthHelper::sanitizeInput($user);
+
+    if($this->verifyUsername($user) == True) 
+    {
+      return ['success' => false, 'error' => 'User'];
+    }
+
+    $db = new DataBaseConnect($this->db_path);
+    $db->select('u','chat_users')
+      ->where("user_name = '".$user."'");
+    
+    $users = $db->result();
+
+    if(count($users) == 0)
+    {
+      return ['success' => false, 'error' => 'UserNotFound'];
+    }
+
+    $user_data = $users[0];
+
+    if(!AuthHelper::verifyPassword($password, $user_data['hash']))
+    {
+      return ['success' => false, 'error' => 'InvalidPassword'];
+    }
+
+    AuthHelper::createAuthSession($user_data['user_id'], $user_data['user_name']);
+
+    $db = new DataBaseConnect($this->db_path);
+    $db->update('chat_users', [
+      'user_status'  => "A",
+      'last_update'  => date('Y-m-d H:i:s')
+    ])->where("user_id = ".$user_data['user_id'])->fetch();
+
+    $db->insert('chat_messages', [
+      'message_content' => "",
+      'send_date'       => date('Y-m-d H:i:s'),
+      'user_id'         => $user_data['user_id'],
+      'message_type'    => "connect",
+      'img_url'         => null
+    ]);
+
+    return ['success' => true, 'user_id' => $user_data['user_id']];
+  }
+
   public function disconnect($user_id)
   {
     if(isset($user_id) && !empty($user_id))
@@ -197,7 +208,7 @@ class ChatModel
       'user_name' => $_SESSION['user_name']
     ]; 
 
-    $text = $this->clearString($text);
+    $text = AuthHelper::sanitizeInput($text);
       
     $db = new DataBaseConnect($this->db_path);
 
