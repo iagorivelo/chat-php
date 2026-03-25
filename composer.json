@@ -19,5 +19,7 @@
             "email": "spacca.dayvson@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "firebase/php-jwt": "^7.0"
+    }
 }
