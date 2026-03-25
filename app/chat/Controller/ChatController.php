@@ -3,6 +3,7 @@
 namespace app\chat\Controller;
 
 use app\chat\Model\ChatModel;
+use app\chat\Helper\AuthHelper;
 
 class ChatController
 {
@@ -28,30 +29,77 @@ class ChatController
     }
   }
 
+  /**
+   * Processa login ou registro de usuário
+   */
+  public static function authenticate()
+  {
+    session_start();
+
+    if(!isset($_POST['user']) || !isset($_POST['password']))
+    {
+      header('Location: /?Error=MissingData');
+      exit;
+    }
+
+    $user = $_POST['user'];
+    $password = $_POST['password'];
+    $action = $_POST['action'] ?? 'login';
+
+    if(strlen($user) > 20)
+    {
+      header('Location: /?Error=NameLength');
+      exit;
+    }
+
+    $chatModel = new ChatModel();
+
+    if($action === 'register')
+    {
+      $result = $chatModel->register($user, $password);
+      
+      if(!$result['success'])
+      {
+        header('Location: /?Error='.$result['error']);
+        exit;
+      }
+    }
+    else
+    {
+      $result = $chatModel->login($user, $password);
+      
+      if(!$result['success'])
+      {
+        header('Location: /?Error='.$result['error']);
+        exit;
+      }
+    }
+
+    header('Location: /chat');
+    exit;
+  }
+
   public static function chat()
   {
     session_start();
 
-    if(!isset($_SESSION['user_name']) || empty($_SESSION['user_name']))
+    if(!AuthHelper::checkAuth())
     {
       header('Location: /');
+      exit;
     }
 
-    if((isset($_POST['user']) && strlen($_POST['user']) > 20) || (isset($_SESSION['user_name']) && strlen($_SESSION['user_name']) > 20))
+    if(isset($_SESSION['user_name']) && strlen($_SESSION['user_name']) > 20)
     {
-      unset($_SESSION['user_name']);
+      AuthHelper::destroyAuthSession();
       header('Location: /?Error=NameLength');
+      exit;
     }
-    else
-    {
-      $chatModel = new ChatModel();
-      $chatModel->connect(isset($_POST["user"]) && !empty($_POST["user"]) ? $_POST["user"] : (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : NULL));
-  
-      $chatModel = new ChatModel();
-      $emojis = $chatModel->getEmojis();
-  
-      include_once "app/chat/View/chat.phtml";
-    }
+
+    $chatModel = new ChatModel();
+    $emojis = $chatModel->getEmojis();
+
+    include_once "app/chat/View/chat.phtml";
   }
 
   public static function getMessages()
@@ -84,11 +132,13 @@ class ChatController
   {
     session_start();
 
-    $chatModel = new ChatModel();
-    $chatModel->disconnect($_SESSION['user_id']);
+    if(isset($_SESSION['user_id']))
+    {
+      $chatModel = new ChatModel();
+      $chatModel->disconnect($_SESSION['user_id']);
+    }
 
-    unset($_SESSION['user_name']);
-    unset($_SESSION['user_id']);
+    AuthHelper::destroyAuthSession();
 
     header('Location: /?Logout');
   }

@@ -12,6 +12,11 @@ switch ($route) {
 
     break;
 
+  case "/authenticate":
+    ChatController::authenticate();
+
+    break;
+
   case "/chat":
     ChatController::chat();
 
