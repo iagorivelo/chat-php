@@ -20,6 +20,12 @@
         }
     ],
     "require": {
+        "phpunit/phpunit": "^10.0",
         "firebase/php-jwt": "^7.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }
