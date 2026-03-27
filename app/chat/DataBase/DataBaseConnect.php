@@ -7,118 +7,117 @@ use SQLite3;
 class DataBaseConnect
 {
   protected $db, $query, $stringQuery;
+  protected array $bindings = [];
 
-  public function __construct(string $path = Null)
+  public function __construct(string $path = null)
   {
     $this->db = new SQLite3($path);
     $this->createStartTables();
   }
 
-  public function select(string $table_tag, string $table, array $columns = Null)
+  public function select(string $table_tag, string $table, array $columns = null)
   {
     $columnsStr = '*';
-
-    if (isset($columns) && !empty($columns)) 
-    {
+    if (isset($columns) && !empty($columns)) {
       $columnsStr = implode(', ', $columns);
     }
-
     $this->stringQuery = " SELECT $columnsStr FROM $table AS $table_tag ";
-
+    $this->bindings = [];
     return $this;
   }
 
   public function update(string $table, array $setValues)
   {
     $arraySet = [];
-
-    foreach($setValues as $key => $value)
-    {
-      $value = is_string($value) ? "'".$value."'" : $value;
-
-      $arraySet[] = " $key = $value ";
+    $this->bindings = [];
+    foreach ($setValues as $key => $value) {
+      $arraySet[] = " $key = ? ";
+      $this->bindings[] = $value;
     }
-
-    $this->stringQuery .=  " UPDATE $table SET ".implode(', ', $arraySet)." ";
-
+    $this->stringQuery = " UPDATE $table SET " . implode(', ', $arraySet) . " ";
     return $this;
   }
 
-  public function where(string $whereQuery)
+  /**
+   * WHERE com placeholders seguros
+   */
+  public function where(string $whereQuery, array $params = [])
   {
-    $this->stringQuery .=  " WHERE $whereQuery ";
+    $this->stringQuery .= " WHERE $whereQuery ";
+    $this->bindings = array_merge($this->bindings, $params);
     return $this;
   }
 
   public function join(string $table_tag, string $table, string $connect_table, string $join_type = "")
   {
-    $this->stringQuery .=  " $join_type JOIN $table AS $table_tag ON $connect_table ";
+    $this->stringQuery .= " $join_type JOIN $table AS $table_tag ON $connect_table ";
+    return $this;
   }
 
   public function group(string $column)
   {
     $this->stringQuery .= " GROUP BY $column ";
+    return $this;
   }
 
   public function insert(string $table, array $values)
   {
-    if (empty($values)) 
-    {
+    if (empty($values)) {
       return false;
     }
 
-    $columns      = implode(', ',array_keys($values));
-    $index_values = array_fill(0, count($values), '?');
-    $placeholders = implode(', ', $index_values);
-
+    $columns = implode(', ', array_keys($values));
+    $placeholders = implode(', ', array_fill(0, count($values), '?'));
     $this->stringQuery = "INSERT INTO $table ($columns) VALUES ($placeholders);";
-      
-    try 
-    {
+
+    try {
       $query = $this->db->prepare($this->stringQuery);
-
       $i = 1;
-
-      foreach($values as $value) {
-
+      foreach ($values as $value) {
         $query->bindValue($i, $value, SQLITE3_TEXT);
         $i++;
       }
-
       $query->execute();
-
       return $this->db->lastInsertRowID();
-
-    } catch (\Exception $e) 
-    {
-      echo "Erro na consulta: " . $e->getMessage();  
+    } catch (\Exception $e) {
+      echo "Erro na consulta: " . $e->getMessage();
     }
-
     return "";
   }
 
+  /**
+   * Executa UPDATE/DELETE com prepared statements
+   */
   public function fetch()
   {
-    $this->db->exec($this->stringQuery.";");
+    $stmt = $this->db->prepare($this->stringQuery . ";");
+    foreach ($this->bindings as $i => $value) {
+      $stmt->bindValue($i + 1, $value, SQLITE3_TEXT);
+    }
+    $stmt->execute();
     $this->stringQuery = "";
+    $this->bindings = [];
   }
 
+  /**
+   * Executa SELECT com prepared statements
+   */
   public function result()
   {
-    $this->query = $this->db->query($this->stringQuery);
+    $stmt = $this->db->prepare($this->stringQuery);
+    foreach ($this->bindings as $i => $value) {
+      $stmt->bindValue($i + 1, $value, SQLITE3_TEXT);
+    }
+    $queryResult = $stmt->execute();
 
     $rows = [];
-
-    if ($this->query)
-    {
-      while ($row = $this->query->fetchArray(SQLITE3_ASSOC))
-      {
+    if ($queryResult) {
+      while ($row = $queryResult->fetchArray(SQLITE3_ASSOC)) {
         $rows[] = $row;
       }
     }
-
     $this->stringQuery = "";
-
+    $this->bindings = [];
     return $rows;
   }
 
@@ -127,55 +126,35 @@ class DataBaseConnect
     return $this->stringQuery;
   }
 
-  private function create(string $table_name, array $columns, array $constraint_columns = Null)
+  private function create(string $table_name, array $columns, array $constraint_columns = null)
   {
     $arr_columns = [];
-
-    foreach ($columns as $column => $type) 
-    {
+    foreach ($columns as $column => $type) {
       $arr_columns[] = "$column $type";
     }
-
     $str_columns = implode(", ", $arr_columns);
 
-    $str_constraint = "";
-
-    if(isset($constraint_columns) && !empty($constraint_columns))
-    {
-      $arr_constraint = [];
-
-      foreach ($constraint_columns as $table => $column) 
-      {
-        $arr_constraint[] = " FOREIGN KEY ($column) REFERENCES $table($column) ";
-      }
-
-      $str_constraint = implode(", ", $arr_constraint); // [Todo] - Erro de sintax quando liberado as FK
-    }
-
     $this->stringQuery = "
-      CREATE TABLE IF NOT EXISTS $table_name (
-        $str_columns
-      );
-    ";
-
+            CREATE TABLE IF NOT EXISTS $table_name (
+                $str_columns
+            );
+        ";
     $this->db->exec($this->stringQuery);
   }
 
   public function createStartTables()
   {
-    $this->create("chat_users",[
-
-      "user_id"      => "INTEGER PRIMARY KEY AUTOINCREMENT",
-      "user_name"    => "TEXT",
-      "hash"         => "TEXT",
-      "user_status"  => "TEXT",
-      "user_theme"   => "TEXT",
+    $this->create("chat_users", [
+      "user_id"     => "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "user_name"   => "TEXT",
+      "hash"        => "TEXT",
+      "user_status" => "TEXT",
+      "user_theme"  => "TEXT",
       "last_update"  => "DATETIME",
       "create_date"  => "DATETIME"
     ]);
 
-    $this->create("chat_messages",[
-
+    $this->create("chat_messages", [
       "message_id"      => "INTEGER PRIMARY KEY AUTOINCREMENT",
       "message_content" => "TEXT",
       "send_date"       => "DATETIME",
@@ -185,7 +164,7 @@ class DataBaseConnect
     ]);
   }
 
-  public function clearTable() 
+  public function clearTable()
   {
     $this->db->exec("DELETE FROM chat_messages;");
   }

@@ -11,9 +11,11 @@ class ChatModel
   private $partial;
   private string $db_path = "app/db/db.sqlite";
   private array  $user;
+  private DataBaseConnect $db;
 
-  public function __construct()
+  public function __construct(?DataBaseConnect $db = null)
   {
+    $this->db = $db ?? new DataBaseConnect($this->db_path);
     $this->partial = new PartialControl();
 
     $this->user['data'] = [
@@ -29,25 +31,21 @@ class ChatModel
   {
     $user = AuthHelper::sanitizeInput($user);
 
-    if($this->verifyUsername($user) == True) 
-    {
+    if ($this->verifyUsername($user) == True) {
       return ['success' => false, 'error' => 'User'];
     }
 
-    if(strlen($password) < 6)
-    {
+    if (strlen($password) < 6) {
       return ['success' => false, 'error' => 'PasswordLength'];
     }
 
-    if ($this->verificaExisteUsuario($user)) 
-    {
+    if ($this->verificaExisteUsuario($user)) {
       return ['success' => false, 'error' => 'UserExists'];
     }
 
     $password_hash = AuthHelper::hashPassword($password);
 
-    $db = new DataBaseConnect($this->db_path);
-    $id_user = $db->insert('chat_users', [
+    $id_user = $this->db->insert('chat_users', [
       'user_name'    => $user,
       'hash'         => $password_hash,
       'user_status'  => "A",
@@ -57,7 +55,7 @@ class ChatModel
 
     AuthHelper::createAuthSession($id_user, $user);
 
-    $db->insert('chat_messages', [
+    $this->db->insert('chat_messages', [
       'message_content' => "",
       'send_date'       => date('Y-m-d H:i:s'),
       'user_id'         => $id_user,
@@ -75,38 +73,33 @@ class ChatModel
   {
     $user = AuthHelper::sanitizeInput($user);
 
-    if($this->verifyUsername($user) == True) 
-    {
+    if ($this->verifyUsername($user) == True) {
       return ['success' => false, 'error' => 'User'];
     }
 
-    $db = new DataBaseConnect($this->db_path);
-    $db->select('u','chat_users')
-      ->where("user_name = '".$user."'");
-    
-    $users = $db->result();
+    $this->db->select('u', 'chat_users')
+      ->where("user_name = ?", [$user]);
 
-    if(count($users) == 0)
-    {
+    $users = $this->db->result();
+
+    if (count($users) == 0) {
       return ['success' => false, 'error' => 'UserNotFound'];
     }
 
     $user_data = $users[0];
 
-    if(!AuthHelper::verifyPassword($password, $user_data['hash']))
-    {
+    if (!AuthHelper::verifyPassword($password, $user_data['hash'])) {
       return ['success' => false, 'error' => 'InvalidPassword'];
     }
 
     AuthHelper::createAuthSession($user_data['user_id'], $user_data['user_name']);
 
-    $db = new DataBaseConnect($this->db_path);
-    $db->update('chat_users', [
-      'user_status'  => "A",
-      'last_update'  => date('Y-m-d H:i:s')
-    ])->where("user_id = ".$user_data['user_id'])->fetch();
+    $this->db->update('chat_users', [
+      'user_status' => 'A',
+      'last_update' => date('Y-m-d H:i:s')
+    ])->where("user_id = ?", [$user_data['user_id']])->fetch();
 
-    $db->insert('chat_messages', [
+    $this->db->insert('chat_messages', [
       'message_content' => "",
       'send_date'       => date('Y-m-d H:i:s'),
       'user_id'         => $user_data['user_id'],
@@ -119,27 +112,21 @@ class ChatModel
 
   public function disconnect($user_id)
   {
-    if(isset($user_id) && !empty($user_id))
-    {
-      $db = new DataBaseConnect($this->db_path);
-
-      $db->update('chat_users', [
+    if (isset($user_id) && !empty($user_id)) {
+      $this->db->update('chat_users', [
         'user_status' => "I",
         'last_update' => date('Y-m-d H:i:s')
       ])
-      ->where(" user_id = '$user_id' AND user_status = 'A' ")
-      ->fetch();
+        ->where("user_id = ? AND user_status = ?", [$user_id, 'A'])->fetch();
 
-      $db->insert('chat_messages', [
+      $this->db->insert('chat_messages', [
         'message_content' => "",
         'send_date'       => date('Y-m-d H:i:s'),
         'user_id'         => $user_id,
         'message_type'    => "disconnect",
         'img_url'         => null
       ]);
-    }
-    else 
-    {
+    } else {
       unset($_SESSION['user_name']);
       unset($_SESSION['user_id']);
 
@@ -149,12 +136,10 @@ class ChatModel
 
   private function verificaExisteUsuario(string $user_name)
   {
-    $db = new DataBaseConnect($this->db_path);
+    $this->db->select('m', 'chat_users')
+      ->where("user_name = ?", [$user_name]);
 
-    $db->select('m', 'chat_users')
-    ->where("user_name = '$user_name'");
-
-    return count($db->result()) > 0 ? true : false;
+    return count($this->db->result()) > 0 ? true : false;
   }
 
   public function getMessages()
@@ -165,39 +150,32 @@ class ChatModel
 
       'user_id'   => isset($_SESSION['user_id'])   ? $_SESSION['user_id']   : '',
       'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''
-    ];   
+    ];
 
-    if(isset($this->user['data']['user_name']) && !empty($this->user['data']['user_name']))
-    {
-      $db = new DataBaseConnect($this->db_path);
+    if (isset($this->user['data']['user_name']) && !empty($this->user['data']['user_name'])) {
+      $this->db->select('m', 'chat_messages');
+      $messages = $this->db->result();
 
-      $db->select('m', 'chat_messages');
-      $messages = $db->result();
-
-      if (count($messages) > 0) 
-      {
-        foreach ($messages as $message) 
-        {
+      if (count($messages) > 0) {
+        foreach ($messages as $message) {
           $message['own'] = $this->user['data']['user_id'] == $message['user_id'] ? true : false;
 
-          $db->select('m', 'chat_users')
-          ->where("user_id = ".$message['user_id']);
+          $this->db->select('m', 'chat_users')
+            ->where("user_id = ?", [$message['user_id']]);
 
-          $user = $db->result();
+          $user = $this->db->result();
 
           $message['user_name'] = $user[0]['user_name'];
           $html = $this->partial->render('message', $message);
 
           echo $html;
         }
-      } 
-      else 
-      {
+      } else {
         echo $this->partial->render('no-messages');
       }
     }
   }
-  
+
   public function sendMessage(string $text)
   {
     session_start();
@@ -206,13 +184,11 @@ class ChatModel
 
       'user_id'   => $_SESSION['user_id'],
       'user_name' => $_SESSION['user_name']
-    ]; 
+    ];
 
     $text = AuthHelper::sanitizeInput($text);
-      
-    $db = new DataBaseConnect($this->db_path);
 
-    $db->insert('chat_messages', [
+    $this->db->insert('chat_messages', [
       'message_content' => $text,
       'send_date'       => date('Y-m-d H:i:s'),
       'user_id'         => $this->user['data']['user_id'],
@@ -220,7 +196,7 @@ class ChatModel
       'img_url'         => null
     ]);
   }
-  
+
   public function getUsersCount()
   {
     session_start();
@@ -229,15 +205,13 @@ class ChatModel
 
       'user_id'   => isset($_SESSION['user_id'])   ? $_SESSION['user_id']   : '',
       'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''
-    ]; 
+    ];
 
-    $db = new DataBaseConnect($this->db_path);
-    
-    $db->select('u','chat_users')
-    ->where("user_status = 'A'")
-    ->group('user_id');
+    $this->db->select('u', 'chat_users')
+      ->where("user_status = 'A'")
+      ->group('user_id');
 
-    $result = $db->result();
+    $result = $this->db->result();
 
     echo json_encode([
       'own_id' => $this->user['data']['user_id'],
@@ -245,11 +219,10 @@ class ChatModel
       'list'   => $result
     ]);
   }
-  
+
   public function clearMessages()
   {
-    $db = new DataBaseConnect($this->db_path);
-    $db->clearTable();
+    $this->db->clearTable();
   }
 
   private function clearString(string $string)
@@ -262,7 +235,7 @@ class ChatModel
     $pattern = '~^[[:alnum:]-]+$~u';
     return !isset($user) || empty(trim($this->clearString($user))) || ((bool) preg_match($pattern, trim($this->clearString($user)))) == false;
   }
-  
+
   public function getEmojis()
   {
     $apiKey = '194953e82591ea5ae5a8b1ad1bdfdf9c95f944e6';
@@ -271,11 +244,10 @@ class ChatModel
     $response = file_get_contents($url);
     $emojis = [];
 
-    if ($response)
-    {
-        $emojis = json_decode($response,true);
+    if ($response) {
+      $emojis = json_decode($response, true);
     }
-                
+
     return $emojis;
   }
 }
