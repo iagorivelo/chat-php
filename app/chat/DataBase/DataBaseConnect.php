@@ -9,14 +9,17 @@ class DataBaseConnect
   protected $db, $query, $stringQuery;
   protected array $bindings = [];
 
-  public function __construct(string $path = null)
+  public function __construct(?string $path)
   {
     $this->db = new SQLite3($path);
     $this->createStartTables();
   }
 
-  public function select(string $table_tag, string $table, array $columns = null)
-  {
+  public function select(
+    string $table_tag,
+    string $table,
+    array $columns = []
+  ) {
     $columnsStr = '*';
     if (isset($columns) && !empty($columns)) {
       $columnsStr = implode(', ', $columns);
@@ -126,7 +129,7 @@ class DataBaseConnect
     return $this->stringQuery;
   }
 
-  private function create(string $table_name, array $columns, array $constraint_columns = null)
+  private function create(string $table_name, array $columns, array $constraint_columns = [])
   {
     $arr_columns = [];
     foreach ($columns as $column => $type) {

@@ -4,7 +4,7 @@ namespace app\chat\View\partials;
 
 class PartialControl
 {
-  public function render(string $partialName, array $data = NULL)
+  public function render(string $partialName, array $data = [])
   {
     if (isset($data) && !empty($data)) {
       extract($data);
